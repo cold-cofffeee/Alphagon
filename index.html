@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alphagon - Intelligence over volume</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <h1 class="app-name">Alphagon</h1>
+                <p class="tagline">Intelligence over volume.</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Workspace -->
+    <main class="workspace">
+        <!-- Input Panel (Left) -->
+        <section class="panel input-panel">
+            <div class="panel-header">
+                <h2>📥 Media Input</h2>
+            </div>
+            <div class="panel-content">
+                <!-- Upload Area -->
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-icon">📁</div>
+                    <p class="upload-text">Drag & drop video or audio file</p>
+                    <p class="upload-subtext">or</p>
+                    <button class="btn-primary" onclick="document.getElementById('fileInput').click()">
+                        Browse Files
+                    </button>
+                    <input type="file" id="fileInput" accept="video/*,audio/*" hidden>
+                    <p class="upload-formats">Supports: MP4, MP3, WAV, M4A, MOV, AVI</p>
+                </div>
+
+                <!-- Processing Status -->
+                <div class="processing-status" id="processingStatus" style="display: none;">
+                    <div class="status-item">
+                        <span class="status-label">Status:</span>
+                        <span class="status-value" id="statusText">Ready</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                </div>
+
+                <!-- Transcription Display -->
+                <div class="transcription-section" id="transcriptionSection" style="display: none;">
+                    <div class="section-header">
+                        <h3>📝 Transcription</h3>
+                        <button class="btn-secondary btn-sm" id="editTranscriptionBtn">Edit</button>
+                    </div>
+                    <textarea 
+                        class="transcription-text" 
+                        id="transcriptionText" 
+                        placeholder="Transcription will appear here..."
+                        readonly
+                    ></textarea>
+                    <div class="transcription-actions">
+                        <button class="btn-secondary" id="saveTranscriptionBtn" style="display: none;">Save Changes</button>
+                        <button class="btn-secondary" id="clearBtn">Clear & Start New</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Control & Tools Panel (Center) -->
+        <section class="panel tools-panel">
+            <div class="panel-header">
+                <h2>🎛️ Controls & Tools</h2>
+            </div>
+            <div class="panel-content">
+                <!-- Global Settings -->
+                <div class="global-settings">
+                    <h3 class="settings-title">Global Settings</h3>
+                    <p class="settings-subtitle">These settings apply to all AI tools below</p>
+
+                    <div class="setting-group">
+                        <label>🌍 Target Region</label>
+                        <select id="targetRegion" class="input-select">
+                            <option value="global">Global</option>
+                            <option value="us">United States</option>
+                            <option value="uk">United Kingdom</option>
+                            <option value="bd">Bangladesh</option>
+                            <option value="in">India</option>
+                            <option value="pk">Pakistan</option>
+                            <option value="ca">Canada</option>
+                            <option value="au">Australia</option>
+                        </select>
+                    </div>
+
+                    <div class="setting-group">
+                        <label>💭 Emotion</label>
+                        <select id="emotion" class="input-select">
+                            <option value="emotional">Emotional</option>
+                            <option value="logical">Logical</option>
+                            <option value="inspirational">Inspirational</option>
+                            <option value="aggressive">Aggressive</option>
+                            <option value="friendly">Friendly</option>
+                            <option value="authoritative">Authoritative</option>
+                        </select>
+                    </div>
+
+                    <div class="setting-group">
+                        <label>🎭 Tone</label>
+                        <select id="tone" class="input-select">
+                            <option value="casual">Casual</option>
+                            <option value="professional">Professional</option>
+                            <option value="storytelling">Storytelling</option>
+                            <option value="educational">Educational</option>
+                        </select>
+                    </div>
+
+                    <div class="setting-group">
+                        <label>🌐 Language</label>
+                        <select id="language" class="input-select">
+                            <option value="english">English</option>
+                            <option value="bangla">Bangla</option>
+                            <option value="mixed">Mixed (Bangla + English)</option>
+                        </select>
+                    </div>
+
+                    <div class="setting-group">
+                        <label>✍️ Creator Preference Notes (Optional)</label>
+                        <textarea 
+                            id="creatorNotes" 
+                            class="input-textarea" 
+                            placeholder="Add any specific style preferences, keywords, or guidelines..."
+                            rows="3"
+                        ></textarea>
+                    </div>
+                </div>
+
+                <!-- AI Tools -->
+                <div class="tools-section">
+                    <h3 class="tools-title">AI Content Tools</h3>
+
+                    <!-- Content Generation Tools -->
+                    <div class="tool-category">
+                        <h4 class="category-title">🧠 Content Generation</h4>
+                        
+                        <div class="tool-card" data-tool="thumbnail">
+                            <div class="tool-info">
+                                <h5 class="tool-name">Thumbnail Text Copy Generator</h5>
+                                <p class="tool-desc">Generate eye-catching text for video thumbnails</p>
+                            </div>
+                            <button class="btn-generate" data-tool="thumbnail">Generate</button>
+                        </div>
+
+                        <div class="tool-card" data-tool="seo-title">
+                            <div class="tool-info">
+                                <h5 class="tool-name">SEO Title Generator</h5>
+                                <p class="tool-desc">Create search-optimized titles that rank</p>
+                            </div>
+                            <button class="btn-generate" data-tool="seo-title">Generate</button>
+                        </div>
+                    </div>
+
+                    <!-- Platform-Specific -->
+                    <div class="tool-category">
+                        <h4 class="category-title">📱 Platform-Specific Content</h4>
+                        
+                        <div class="tool-card" data-tool="youtube">
+                            <div class="tool-info">
+                                <h5 class="tool-name">YouTube</h5>
+                                <p class="tool-desc">Optimized title & caption for YouTube</p>
+                            </div>
+                            <button class="btn-generate" data-tool="youtube">Generate</button>
+                        </div>
+
+                        <div class="tool-card" data-tool="facebook">
+                            <div class="tool-info">
+                                <h5 class="tool-name">Facebook</h5>
+                                <p class="tool-desc">Engagement-driven title & caption</p>
+                            </div>
+                            <button class="btn-generate" data-tool="facebook">Generate</button>
+                        </div>
+
+                        <div class="tool-card" data-tool="twitter">
+                            <div class="tool-info">
+                                <h5 class="tool-name">Twitter / X</h5>
+                                <p class="tool-desc">Concise, viral-ready content</p>
+                            </div>
+                            <button class="btn-generate" data-tool="twitter">Generate</button>
+                        </div>
+
+                        <div class="tool-card" data-tool="instagram">
+                            <div class="tool-info">
+                                <h5 class="tool-name">Instagram Reels</h5>
+                                <p class="tool-desc">Hashtag-rich, visual-focused caption</p>
+                            </div>
+                            <button class="btn-generate" data-tool="instagram">Generate</button>
+                        </div>
+
+                        <div class="tool-card" data-tool="blog">
+                            <div class="tool-info">
+                                <h5 class="tool-name">Blog Post</h5>
+                                <p class="tool-desc">Long-form article title & intro</p>
+                            </div>
+                            <button class="btn-generate" data-tool="blog">Generate</button>
+                        </div>
+                    </div>
+
+                    <!-- Descriptions -->
+                    <div class="tool-category">
+                        <h4 class="category-title">📝 Descriptions</h4>
+                        
+                        <div class="tool-card" data-tool="short-desc">
+                            <div class="tool-info">
+                                <h5 class="tool-name">Short Description</h5>
+                                <p class="tool-desc">Brief, punchy summary (100-150 words)</p>
+                            </div>
+                            <button class="btn-generate" data-tool="short-desc">Generate</button>
+                        </div>
+
+                        <div class="tool-card" data-tool="long-desc">
+                            <div class="tool-info">
+                                <h5 class="tool-name">Long-Form Description</h5>
+                                <p class="tool-desc">Comprehensive, detailed description</p>
+                            </div>
+                            <button class="btn-generate" data-tool="long-desc">Generate</button>
+                        </div>
+                    </div>
+
+                    <!-- Marketing Tools -->
+                    <div class="tool-category">
+                        <h4 class="category-title">📢 Marketing</h4>
+                        
+                        <div class="tool-card" data-tool="ad-copy">
+                            <div class="tool-info">
+                                <h5 class="tool-name">Ad Copy Generator</h5>
+                                <p class="tool-desc">Conversion-focused, scroll-stopping ads</p>
+                            </div>
+                            <button class="btn-generate" data-tool="ad-copy">Generate</button>
+                        </div>
+
+                        <div class="tool-card" data-tool="hooks">
+                            <div class="tool-info">
+                                <h5 class="tool-name">Hooks Generator</h5>
+                                <p class="tool-desc">Attention-grabbing opening lines</p>
+                            </div>
+                            <button class="btn-generate" data-tool="hooks">Generate</button>
+                        </div>
+                    </div>
+
+                    <!-- Content Expansion -->
+                    <div class="tool-category">
+                        <h4 class="category-title">🔁 Content Expansion</h4>
+                        
+                        <div class="tool-card" data-tool="more-same">
+                            <div class="tool-info">
+                                <h5 class="tool-name">More Content Ideas (Same Angle)</h5>
+                                <p class="tool-desc">Similar content variations</p>
+                            </div>
+                            <button class="btn-generate" data-tool="more-same">Generate</button>
+                        </div>
+
+                        <div class="tool-card" data-tool="more-different">
+                            <div class="tool-info">
+                                <h5 class="tool-name">More Content Ideas (With Twists)</h5>
+                                <p class="tool-desc">Fresh angles and perspectives</p>
+                            </div>
+                            <button class="btn-generate" data-tool="more-different">Generate</button>
+                        </div>
+                    </div>
+
+                    <!-- Optimization -->
+                    <div class="tool-category">
+                        <h4 class="category-title">🧩 Optimization & Strategy</h4>
+                        
+                        <div class="tool-card" data-tool="improvements">
+                            <div class="tool-info">
+                                <h5 class="tool-name">Improvement Suggestions</h5>
+                                <p class="tool-desc">Strategic recommendations for better content</p>
+                            </div>
+                            <button class="btn-generate" data-tool="improvements">Generate</button>
+                        </div>
+
+                        <div class="tool-card" data-tool="competitor">
+                            <div class="tool-info">
+                                <h5 class="tool-name">Competitor Analysis</h5>
+                                <p class="tool-desc">Niche-based competitive insights</p>
+                            </div>
+                            <button class="btn-generate" data-tool="competitor">Generate</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Output Panel (Right) -->
+        <section class="panel output-panel">
+            <div class="panel-header">
+                <h2>📤 Generated Content</h2>
+                <button class="btn-secondary btn-sm" id="clearOutputsBtn">Clear All</button>
+            </div>
+            <div class="panel-content">
+                <div class="output-placeholder" id="outputPlaceholder">
+                    <div class="placeholder-icon">✨</div>
+                    <p>Generated content will appear here</p>
+                    <p class="placeholder-subtext">Click any "Generate" button to start</p>
+                </div>
+
+                <div class="outputs-container" id="outputsContainer">
+                    <!-- Dynamic outputs will be inserted here -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>
