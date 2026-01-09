@@ -1,12 +1,13 @@
 /* ============================================
    DASHBOARD-SPECIFIC STYLES
    Extends design-system.css with dashboard layouts
+   Config-driven, explicit control, zero auto-generation
    ============================================ */
 
 /* Dashboard workspace layout (3-column) */
 .dashboard-workspace {
-  max-width: 1800px;
-  margin: 2rem auto;
+  max-width: 1280px;
+  margin: var(--space-8) auto;
   padding: 0 var(--space-6);
   display: grid;
   grid-template-columns: 1fr 1.2fr 1fr;
@@ -17,9 +18,9 @@
 /* Panel system */
 .dashboard-panel {
   background: var(--color-surface);
-  border: 1px solid var(--color-border-medium);
-  border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-lg);
+  box-shadow: none;
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -27,16 +28,16 @@
 
 .dashboard-panel-header {
   padding: var(--space-4) var(--space-6);
-  border-bottom: 1px solid var(--color-border-medium);
-  background: var(--color-bg-tertiary);
+  border-bottom: 1px solid var(--color-border-default);
+  background: var(--color-bg-secondary);
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
 .dashboard-panel-title {
-  font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-medium);
   color: var(--color-text-primary);
 }
 
@@ -58,14 +59,13 @@
 }
 
 .upload-area:hover {
-  border-color: var(--color-accent);
-  background: var(--color-bg-secondary);
+  border-color: var(--color-brand);
+  background: var(--color-brand-subtle);
 }
 
 .upload-area.dragover {
-  border-color: var(--color-accent);
-  background: var(--color-accent-bg);
-  transform: scale(1.02);
+  border-color: var(--color-brand);
+  background: var(--color-brand-subtle);
 }
 
 .upload-icon {
@@ -81,8 +81,8 @@
 
 /* Processing status */
 .processing-status {
-  background: var(--color-bg-tertiary);
-  border: 1px solid var(--color-border-medium);
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border-default);
   border-radius: var(--radius-lg);
   padding: var(--space-5);
   margin-top: var(--space-6);
@@ -100,20 +100,20 @@
 }
 
 .status-value {
-  color: var(--color-accent);
+  color: var(--color-brand);
   font-weight: var(--font-weight-semibold);
 }
 
 .progress-bar {
-  height: 8px;
-  background: var(--color-border-medium);
+  height: 6px;
+  background: var(--color-bg-tertiary);
   border-radius: var(--radius-sm);
   overflow: hidden;
 }
 
 .progress-fill {
   height: 100%;
-  background: var(--color-accent);
+  background: var(--color-brand);
   width: 0%;
   transition: width var(--transition-slow);
 }
@@ -134,18 +134,20 @@
   width: 100%;
   min-height: 250px;
   padding: var(--space-4);
-  border: 1px solid var(--color-border-strong);
-  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-lg);
   font-family: var(--font-family);
   font-size: var(--font-size-sm);
   line-height: var(--line-height-normal);
   resize: vertical;
+  background: var(--color-bg-tertiary);
 }
 
 .transcription-text:focus {
   outline: none;
-  border-color: var(--color-accent);
-  box-shadow: 0 0 0 3px rgba(26, 26, 26, 0.05);
+  border-color: var(--color-brand);
+  background: var(--color-surface);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
 /* Settings section */
@@ -191,19 +193,19 @@
 
 .tool-category-header {
   font-size: var(--font-size-md);
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--font-weight-medium);
   color: var(--color-text-primary);
   margin-bottom: var(--space-4);
   padding-bottom: var(--space-2);
-  border-bottom: 1px solid var(--color-border-light);
+  border-bottom: 1px solid var(--color-border-default);
 }
 
 .tool-button {
   width: 100%;
   padding: var(--space-4);
   background: var(--color-surface);
-  border: 1px solid var(--color-border-medium);
-  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-lg);
   cursor: pointer;
   transition: all var(--transition-base);
   text-align: left;
@@ -213,10 +215,8 @@
 }
 
 .tool-button:hover {
-  background: var(--color-bg-tertiary);
-  border-color: var(--color-accent);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-sm);
+  background: var(--color-brand-subtle);
+  border-color: var(--color-brand);
 }
 
 .tool-button:disabled {
@@ -246,8 +246,8 @@
 
 /* Output panel */
 .output-section {
-  background: var(--color-bg-tertiary);
-  border: 1px solid var(--color-border-medium);
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border-default);
   border-radius: var(--radius-lg);
   padding: var(--space-5);
   margin-bottom: var(--space-5);
@@ -261,20 +261,22 @@
 }
 
 .output-label {
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--font-weight-medium);
   color: var(--color-text-primary);
+  font-size: var(--font-size-md);
 }
 
 .output-content {
   background: var(--color-surface);
-  border: 1px solid var(--color-border-light);
-  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-lg);
   padding: var(--space-4);
   min-height: 150px;
   white-space: pre-wrap;
   font-size: var(--font-size-sm);
   line-height: var(--line-height-relaxed);
   color: var(--color-text-secondary);
+  font-family: var(--font-family);
 }
 
 /* Empty state */

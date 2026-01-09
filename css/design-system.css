@@ -8,62 +8,61 @@
    ============================================ */
 
 :root {
-  /* ===== COLOR SYSTEM (Neutral, Calm, Professional) ===== */
+  /* ===== COLOR SYSTEM (Strict Design Spec) ===== */
   
-  /* Background & Surface */
-  --color-bg-primary: #ffffff;           /* Pure white background */
-  --color-bg-secondary: #f8f9fa;         /* Soft light gray */
-  --color-bg-tertiary: #f3f4f6;          /* Slightly darker gray */
-  --color-surface: #ffffff;              /* Card/panel background */
+  /* Backgrounds */
+  --color-bg-primary: #FFFFFF;           /* Primary white background */
+  --color-bg-secondary: #F8F9FB;         /* Secondary cards/sections */
+  --color-bg-tertiary: #F3F4F6;          /* Tertiary tables/panels */
+  --color-surface: #FFFFFF;              /* Card/panel background */
   
   /* Text Colors */
-  --color-text-primary: #1a1a1a;         /* Deep charcoal (main text) */
-  --color-text-secondary: #4b5563;       /* Medium gray (secondary) */
-  --color-text-tertiary: #6b7280;        /* Light gray (helper text) */
-  --color-text-muted: #9ca3af;           /* Very light gray (placeholders) */
+  --color-text-primary: #0F172A;         /* Primary text */
+  --color-text-secondary: #475569;       /* Secondary text */
+  --color-text-muted: #94A3B8;           /* Muted text */
   
-  /* Borders */
-  --color-border-light: #f3f4f6;         /* Very subtle border */
-  --color-border-medium: #e5e7eb;        /* Default border */
-  --color-border-strong: #d1d5db;        /* Strong border */
+  /* Borders & Dividers */
+  --color-border-default: #E5E7EB;       /* Default border */
+  --color-border-strong: #CBD5E1;        /* Strong divider */
   
-  /* Accent (Minimal Use) */
-  --color-accent: #1a1a1a;               /* Black accent for emphasis */
-  --color-accent-light: #374151;         /* Lighter accent */
-  --color-accent-bg: #f9fafb;            /* Accent background */
+  /* Brand Accent - Alphagon Blue */
+  --color-brand: #2563EB;                /* Alphagon Blue */
+  --color-brand-hover: #1D4ED8;          /* Hover state */
+  --color-brand-subtle: #EFF6FF;         /* Subtle tint */
   
-  /* Semantic Colors (Minimal, Only for Status) */
-  --color-success: #10b981;              /* Green for success */
-  --color-warning: #f59e0b;              /* Amber for warnings */
-  --color-danger: #ef4444;               /* Red for errors */
-  --color-info: #3b82f6;                 /* Blue for info (rare use) */
+  /* Status Colors */
+  --color-success: #16A34A;              /* Success green */
+  --color-warning: #D97706;              /* Warning amber */
+  --color-error: #DC2626;                /* Error red */
+  --color-info: #0284C7;                 /* Info blue */
   
   /* ===== TYPOGRAPHY ===== */
   
-  /* Font Family (One Only) */
-  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  /* Font Family - Inter Only */
+  --font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-family-mono: 'JetBrains Mono', 'Consolas', monospace;
   
-  /* Font Sizes (Consistent Scale) */
-  --font-size-xs: 0.75rem;      /* 12px - tiny labels */
-  --font-size-sm: 0.875rem;     /* 14px - body small */
-  --font-size-base: 1rem;       /* 16px - body default */
-  --font-size-md: 1.125rem;     /* 18px - emphasized */
-  --font-size-lg: 1.25rem;      /* 20px - small headers */
-  --font-size-xl: 1.5rem;       /* 24px - section headers */
-  --font-size-2xl: 2rem;        /* 32px - page titles */
-  --font-size-3xl: 2.5rem;      /* 40px - hero titles */
+  /* Font Sizes - Strict Scale */
+  --font-size-xs: 0.75rem;      /* 12px - Labels/Meta */
+  --font-size-sm: 0.875rem;     /* 14px - Body Text */
+  --font-size-base: 0.875rem;   /* 14px - Default Body */
+  --font-size-md: 1rem;         /* 16px - Card Title */
+  --font-size-lg: 1.125rem;     /* 18px - Section Title */
+  --font-size-xl: 1.25rem;      /* 20px - Section Title */
+  --font-size-2xl: 1.75rem;     /* 28px - Page Title */
+  --font-size-3xl: 2rem;        /* 32px - Page Title */
   
-  /* Font Weights (Three Only) */
-  --font-weight-normal: 400;
-  --font-weight-medium: 500;
-  --font-weight-semibold: 600;
+  /* Font Weights */
+  --font-weight-normal: 400;    /* Regular */
+  --font-weight-medium: 500;    /* Medium */
+  --font-weight-semibold: 600;  /* SemiBold */
   
   /* Line Heights */
   --line-height-tight: 1.25;
   --line-height-normal: 1.5;
   --line-height-relaxed: 1.75;
   
-  /* ===== SPACING SCALE (4px Base) ===== */
+  /* ===== SPACING SCALE (8/16/24/32/48 Base) ===== */
   
   --space-1: 0.25rem;   /* 4px */
   --space-2: 0.5rem;    /* 8px */
@@ -75,21 +74,20 @@
   --space-10: 2.5rem;   /* 40px */
   --space-12: 3rem;     /* 48px */
   --space-16: 4rem;     /* 64px */
-  --space-20: 5rem;     /* 80px */
   
   /* ===== BORDER RADIUS ===== */
   
   --radius-sm: 4px;
-  --radius-md: 6px;
-  --radius-lg: 8px;
+  --radius-md: 6px;     /* Buttons */
+  --radius-lg: 8px;     /* Cards */
   --radius-xl: 12px;
   
-  /* ===== SHADOWS (Minimal, Subtle) ===== */
+  /* ===== SHADOWS (Minimal, Subtle - Max: 0 1px 2px rgba(0,0,0,0.04)) ===== */
   
   --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
-  --shadow-md: 0 2px 6px rgba(0, 0, 0, 0.08);
-  --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 1px 2px rgba(0, 0, 0, 0.04);
   
   /* ===== TRANSITIONS ===== */
   
@@ -214,34 +212,35 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Button Variants */
 .btn-primary {
-  background: var(--color-accent);
+  background: var(--color-brand);
   color: var(--color-bg-primary);
-  border-color: var(--color-accent);
+  border-color: var(--color-brand);
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: var(--color-accent-light);
-  border-color: var(--color-accent-light);
+  background: var(--color-brand-hover);
+  border-color: var(--color-brand-hover);
 }
 
 .btn-secondary {
   background: var(--color-bg-primary);
-  color: var(--color-text-primary);
-  border-color: var(--color-border-strong);
+  color: var(--color-brand);
+  border-color: var(--color-brand);
 }
 
 .btn-secondary:hover:not(:disabled) {
-  background: var(--color-bg-tertiary);
+  background: var(--color-brand-subtle);
 }
 
 .btn-danger {
-  background: var(--color-danger);
-  color: var(--color-bg-primary);
-  border-color: var(--color-danger);
+  background: transparent;
+  color: var(--color-error);
+  border-color: var(--color-error);
 }
 
 .btn-danger:hover:not(:disabled) {
-  background: #dc2626;
+  background: var(--color-error);
+  color: var(--color-bg-primary);
 }
 
 .btn-ghost {
@@ -303,8 +302,8 @@ h1, h2, h3, h4, h5, h6 {
 .form-select:focus,
 .form-textarea:focus {
   outline: none;
-  border-color: var(--color-accent);
-  box-shadow: 0 0 0 3px rgba(26, 26, 26, 0.05);
+  border-color: var(--color-brand);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
 .form-input::placeholder {
@@ -334,21 +333,20 @@ h1, h2, h3, h4, h5, h6 {
 
 .card {
   background: var(--color-surface);
-  border: 1px solid var(--color-border-medium);
-  border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-lg);
+  box-shadow: none;
   overflow: hidden;
 }
 
 .card-header {
   padding: var(--space-4) var(--space-6);
-  border-bottom: 1px solid var(--color-border-medium);
-  background: var(--color-bg-tertiary);
+  border-bottom: 1px solid var(--color-border-default);
 }
 
 .card-title {
-  font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-medium);
   color: var(--color-text-primary);
 }
 
@@ -358,8 +356,8 @@ h1, h2, h3, h4, h5, h6 {
 
 .card-footer {
   padding: var(--space-4) var(--space-6);
-  border-top: 1px solid var(--color-border-medium);
-  background: var(--color-bg-tertiary);
+  border-top: 1px solid var(--color-border-default);
+  background: var(--color-bg-secondary);
 }
 
 /* ============================================
@@ -368,7 +366,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .container {
   width: 100%;
-  max-width: 1400px;
+  max-width: 1280px;
   margin: 0 auto;
   padding: 0 var(--space-6);
 }
@@ -378,7 +376,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .container-wide {
-  max-width: 1800px;
+  max-width: 1280px;
 }
 
 /* Grid */
@@ -426,7 +424,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .app-header {
   background: var(--color-surface);
-  border-bottom: 1px solid var(--color-border-medium);
+  border-bottom: 1px solid var(--color-border-default);
   padding: var(--space-4) var(--space-6);
   position: sticky;
   top: 0;
@@ -435,7 +433,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .app-header-content {
-  max-width: 1800px;
+  max-width: 1280px;
   margin: 0 auto;
   display: flex;
   align-items: center;
@@ -451,13 +449,72 @@ h1, h2, h3, h4, h5, h6 {
 
 .app-tagline {
   font-size: var(--font-size-sm);
-  color: var(--color-text-tertiary);
-  font-style: italic;
+  color: var(--color-text-secondary);
   margin-top: var(--space-1);
 }
 
 /* ============================================
-   9. AUTH LAYOUT (Login/Signup Pages)
+   9. SIDEBAR NAVIGATION
+   ============================================ */
+
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.app-sidebar {
+  width: 240px;
+  background: var(--color-surface);
+  border-right: 1px solid var(--color-border-default);
+  padding: var(--space-6);
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.sidebar-nav {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar-nav-item {
+  margin-bottom: var(--space-2);
+}
+
+.sidebar-nav-link {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+}
+
+.sidebar-nav-link:hover {
+  background: var(--color-bg-secondary);
+  color: var(--color-text-primary);
+}
+
+.sidebar-nav-link.active {
+  background: var(--color-brand-subtle);
+  color: var(--color-brand);
+}
+
+.app-main {
+  flex: 1;
+  background: var(--color-bg-secondary);
+  padding: var(--space-8);
+  overflow-x: hidden;
+}
+
+/* ============================================
+   10. AUTH LAYOUT (Login/Signup Pages)
    ============================================ */
 
 .auth-layout {
@@ -473,9 +530,9 @@ h1, h2, h3, h4, h5, h6 {
   width: 100%;
   max-width: 400px;
   background: var(--color-surface);
-  border: 1px solid var(--color-border-medium);
-  border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-md);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xs);
   padding: var(--space-8);
 }
 
@@ -550,13 +607,14 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ============================================
-   11. TABLE SYSTEM
+   11. TABLE SYSTEM (Dense but Readable)
    ============================================ */
 
 .table-wrapper {
   overflow-x: auto;
-  border: 1px solid var(--color-border-medium);
+  border: 1px solid var(--color-border-default);
   border-radius: var(--radius-lg);
+  background: var(--color-surface);
 }
 
 .table {
@@ -567,24 +625,56 @@ h1, h2, h3, h4, h5, h6 {
 
 .table thead {
   background: var(--color-bg-tertiary);
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
 .table th {
   padding: var(--space-3) var(--space-4);
   text-align: left;
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--font-weight-medium);
   color: var(--color-text-primary);
-  border-bottom: 1px solid var(--color-border-medium);
+  border-bottom: 1px solid var(--color-border-strong);
+  white-space: nowrap;
+}
+
+.table th.sortable {
+  cursor: pointer;
+  user-select: none;
+}
+
+.table th.sortable:hover {
+  background: var(--color-bg-secondary);
 }
 
 .table td {
   padding: var(--space-3) var(--space-4);
-  border-bottom: 1px solid var(--color-border-light);
+  border-bottom: 1px solid var(--color-border-default);
   color: var(--color-text-secondary);
 }
 
+.table tbody tr:nth-child(even) {
+  background: var(--color-bg-secondary);
+}
+
 .table tbody tr:hover {
-  background: var(--color-bg-tertiary);
+  background: var(--color-brand-subtle);
+}
+
+.table-actions {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.table-pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-4);
+  border-top: 1px solid var(--color-border-default);
+  background: var(--color-bg-secondary);
 }
 
 /* ============================================
@@ -643,8 +733,8 @@ h1, h2, h3, h4, h5, h6 {
   display: inline-block;
   width: 20px;
   height: 20px;
-  border: 2px solid var(--color-border-medium);
-  border-top-color: var(--color-accent);
+  border: 2px solid var(--color-border-default);
+  border-top-color: var(--color-brand);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
