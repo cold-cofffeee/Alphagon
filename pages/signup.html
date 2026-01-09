@@ -155,7 +155,7 @@
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ email, password, full_name: fullName }),
+          body: JSON.stringify({ email, password, fullName }),
         });
 
         const data = await response.json();
@@ -165,14 +165,19 @@
         }
 
         // Show success message
-        successDiv.textContent = 'Account created! Redirecting to login...';
+        successDiv.textContent = 'Account created! Redirecting to dashboard...';
         successDiv.style.display = 'block';
         errorDiv.style.display = 'none';
 
-        // Redirect to login after 2 seconds
+        // Store session token if returned
+        if (data.data && data.data.session) {
+          localStorage.setItem('supabase.auth.token', JSON.stringify(data.data.session));
+        }
+
+        // Redirect to dashboard immediately
         setTimeout(() => {
-          window.location.href = '/login';
-        }, 2000);
+          window.location.href = '/dashboard';
+        }, 1000);
       } catch (error) {
         errorDiv.textContent = error.message;
         errorDiv.style.display = 'block';

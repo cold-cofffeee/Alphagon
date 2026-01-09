@@ -52,13 +52,26 @@ router.get('/tools/:toolName', async (req, res, next) => {
 // ============================================
 // SYSTEM SETTINGS
 // Frontend reads this for maintenance mode, defaults, etc.
+// ONLY PUBLIC-SAFE SETTINGS ARE EXPOSED
 // ============================================
 
 router.get('/settings', async (req, res, next) => {
   try {
+    // Whitelist of settings safe for public access
+    const publicSettings = [
+      'maintenance_mode',
+      'signup_enabled',
+      'default_language',
+      'default_tone',
+      'default_region',
+      'max_file_size_mb',
+      'max_generation_length',
+    ];
+
     const { data, error } = await supabaseService['serviceClient']
       .from('system_settings')
-      .select('setting_key, setting_value, description');
+      .select('setting_key, setting_value, description')
+      .in('setting_key', publicSettings);
 
     if (error) throw error;
 
@@ -77,6 +90,24 @@ router.get('/settings', async (req, res, next) => {
 router.get('/settings/:key', async (req, res, next) => {
   try {
     const { key } = req.params;
+
+    // Whitelist of settings safe for public access
+    const publicSettings = [
+      'maintenance_mode',
+      'signup_enabled',
+      'default_language',
+      'default_tone',
+      'default_region',
+      'max_file_size_mb',
+      'max_generation_length',
+    ];
+
+    if (!publicSettings.includes(key)) {
+      return res.status(403).json({
+        success: false,
+        error: 'Access to this setting is restricted',
+      });
+    }
 
     const { data, error } = await supabaseService['serviceClient']
       .from('system_settings')

@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Settings - Alphagon</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <style>
+    body {
+      background: #f8f9fa;
+    }
+    .settings-container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+    .settings-header {
+      margin-bottom: 40px;
+    }
+    .settings-header h1 {
+      font-size: 36px;
+      margin-bottom: 8px;
+    }
+    .settings-header p {
+      color: #666;
+    }
+    .settings-card {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      margin-bottom: 24px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .settings-card h2 {
+      margin-bottom: 24px;
+      color: #667eea;
+      font-size: 20px;
+    }
+    .form-group {
+      margin-bottom: 24px;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: #333;
+    }
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    .form-group input:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+    .form-group small {
+      display: block;
+      margin-top: 4px;
+      color: #666;
+      font-size: 13px;
+    }
+    .btn-primary {
+      padding: 12px 32px;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-primary:hover {
+      background: #5568d3;
+    }
+    .btn-secondary {
+      padding: 12px 32px;
+      background: #f8f9fa;
+      color: #333;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      margin-right: 12px;
+    }
+    .success-message {
+      background: #d4edda;
+      border: 1px solid #c3e6cb;
+      color: #155724;
+      padding: 12px;
+      border-radius: 6px;
+      margin-bottom: 20px;
+      display: none;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-top: 24px;
+    }
+    .stat-card {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 8px;
+      text-align: center;
+    }
+    .stat-value {
+      font-size: 32px;
+      font-weight: 700;
+      color: #667eea;
+    }
+    .stat-label {
+      color: #666;
+      font-size: 14px;
+      margin-top: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="settings-container">
+    <div class="settings-header">
+      <h1>⚙️ Settings</h1>
+      <p>Manage your account preferences and default settings</p>
+    </div>
+
+    <div id="success-message" class="success-message"></div>
+
+    <div class="settings-card">
+      <h2>Profile Information</h2>
+      <form id="profile-form">
+        <div class="form-group">
+          <label for="full-name">Full Name</label>
+          <input type="text" id="full-name" placeholder="Your name">
+        </div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" disabled>
+          <small>Email cannot be changed</small>
+        </div>
+        <button type="submit" class="btn-primary">Save Profile</button>
+      </form>
+    </div>
+
+    <div class="settings-card">
+      <h2>Default Generation Settings</h2>
+      <form id="defaults-form">
+        <div class="form-group">
+          <label for="default-language">Default Language</label>
+          <select id="default-language">
+            <option value="english">English</option>
+            <option value="bangla">Bangla</option>
+            <option value="mixed">Mixed</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="default-tone">Default Tone</label>
+          <select id="default-tone">
+            <option value="casual">Casual</option>
+            <option value="professional">Professional</option>
+            <option value="storytelling">Storytelling</option>
+            <option value="educational">Educational</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="default-emotion">Default Emotion</label>
+          <select id="default-emotion">
+            <option value="emotional">Emotional</option>
+            <option value="logical">Logical</option>
+            <option value="inspirational">Inspirational</option>
+            <option value="aggressive">Aggressive</option>
+            <option value="friendly">Friendly</option>
+            <option value="authoritative">Authoritative</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="default-region">Default Region</label>
+          <input type="text" id="default-region" placeholder="e.g., global, us, bd">
+        </div>
+        <button type="submit" class="btn-primary">Save Defaults</button>
+      </form>
+    </div>
+
+    <div class="settings-card">
+      <h2>Usage Statistics</h2>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-value" id="stat-projects">0</div>
+          <div class="stat-label">Total Projects</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="stat-generations">0</div>
+          <div class="stat-label">Total Generations</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="stat-cache">0%</div>
+          <div class="stat-label">Cache Hit Rate</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 40px;">
+      <a href="/dashboard" class="btn-secondary">← Back to Dashboard</a>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = '/api';
+    const token = localStorage.getItem('token');
+
+    // Load user profile
+    async function loadProfile() {
+      try {
+        const response = await fetch(`${API_BASE}/user/profile`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!response.ok) {
+          window.location.href = '/login';
+          return;
+        }
+
+        const profile = await response.json();
+
+        document.getElementById('full-name').value = profile.full_name || '';
+        document.getElementById('email').value = profile.email || '';
+        document.getElementById('default-language').value = profile.default_language || 'english';
+        document.getElementById('default-tone').value = profile.default_tone || 'casual';
+        document.getElementById('default-emotion').value = profile.default_emotion || 'emotional';
+        document.getElementById('default-region').value = profile.default_region || 'global';
+
+        document.getElementById('stat-projects').textContent = profile.total_projects || 0;
+        document.getElementById('stat-generations').textContent = profile.total_generations || 0;
+      } catch (error) {
+        console.error('Failed to load profile:', error);
+      }
+    }
+
+    // Save profile
+    document.getElementById('profile-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      try {
+        const response = await fetch(`${API_BASE}/user/profile`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            full_name: document.getElementById('full-name').value,
+          }),
+        });
+
+        if (!response.ok) throw new Error('Failed to update profile');
+
+        showSuccess('Profile updated successfully!');
+      } catch (error) {
+        alert('Failed to update profile');
+      }
+    });
+
+    // Save defaults
+    document.getElementById('defaults-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      try {
+        const response = await fetch(`${API_BASE}/user/profile`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            default_language: document.getElementById('default-language').value,
+            default_tone: document.getElementById('default-tone').value,
+            default_emotion: document.getElementById('default-emotion').value,
+            default_region: document.getElementById('default-region').value,
+          }),
+        });
+
+        if (!response.ok) throw new Error('Failed to update defaults');
+
+        showSuccess('Default settings updated successfully!');
+      } catch (error) {
+        alert('Failed to update defaults');
+      }
+    });
+
+    function showSuccess(message) {
+      const successDiv = document.getElementById('success-message');
+      successDiv.textContent = message;
+      successDiv.style.display = 'block';
+      setTimeout(() => {
+        successDiv.style.display = 'none';
+      }, 3000);
+    }
+
+    // Load profile on page load
+    loadProfile();
+  </script>
+</body>
+</html>

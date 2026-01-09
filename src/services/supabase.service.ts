@@ -37,17 +37,37 @@ class SupabaseService {
   // ============================================
 
   async signUp(email: string, password: string, fullName?: string) {
-    const { data, error } = await this.client.auth.signUp({
+    // Use service role client to bypass email confirmation
+    const { data, error } = await this.serviceClient.auth.admin.createUser({
       email,
       password,
-      options: {
-        data: {
-          full_name: fullName || '',
-        },
+      email_confirm: true, // Auto-confirm email
+      user_metadata: {
+        full_name: fullName || '',
       },
     });
 
     if (error) throw error;
+    
+    // Create user profile immediately
+    if (data.user) {
+      await this.createUserProfile({
+        id: data.user.id,
+        email: data.user.email!,
+        full_name: fullName || '',
+      });
+      
+      // Sign in the user immediately to get session
+      const { data: sessionData, error: signInError } = await this.client.auth.signInWithPassword({
+        email,
+        password,
+      });
+      
+      if (signInError) throw signInError;
+      
+      return sessionData;
+    }
+    
     return data;
   }
 
@@ -75,6 +95,25 @@ class SupabaseService {
   // ============================================
   // USER PROFILES
   // ============================================
+
+  async createUserProfile(profile: { id: string; email: string; full_name?: string }): Promise<UserProfile | null> {
+    const { data, error } = await this.serviceClient
+      .from('user_profiles')
+      .insert({
+        id: profile.id,
+        email: profile.email,
+        full_name: profile.full_name || null,
+      })
+      .select()
+      .single();
+
+    if (error) {
+      // Ignore if profile already exists
+      if (error.code === '23505') return null;
+      throw error;
+    }
+    return data;
+  }
 
   async getUserProfile(userId: string): Promise<UserProfile | null> {
     const { data, error } = await this.client

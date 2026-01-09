@@ -37,11 +37,18 @@ CREATE TABLE IF NOT EXISTS public.user_profiles (
     last_active_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
+DROP INDEX IF EXISTS idx_user_profiles_email;
+DROP INDEX IF EXISTS idx_user_profiles_created_at;
+
 CREATE INDEX idx_user_profiles_email ON public.user_profiles(email);
 CREATE INDEX idx_user_profiles_created_at ON public.user_profiles(created_at DESC);
 
 -- RLS (Row Level Security)
 ALTER TABLE public.user_profiles ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Users can view own profile" ON public.user_profiles;
+DROP POLICY IF EXISTS "Users can update own profile" ON public.user_profiles;
+DROP POLICY IF EXISTS "Users can insert own profile" ON public.user_profiles;
 
 CREATE POLICY "Users can view own profile"
     ON public.user_profiles FOR SELECT
@@ -96,12 +103,21 @@ CREATE TABLE IF NOT EXISTS public.projects (
     CONSTRAINT projects_title_length CHECK (char_length(title) <= 200)
 );
 
+DROP INDEX IF EXISTS idx_projects_user_id;
+DROP INDEX IF EXISTS idx_projects_created_at;
+DROP INDEX IF EXISTS idx_projects_status;
+
 CREATE INDEX idx_projects_user_id ON public.projects(user_id);
 CREATE INDEX idx_projects_created_at ON public.projects(created_at DESC);
 CREATE INDEX idx_projects_status ON public.projects(status);
 
 -- RLS Policies
 ALTER TABLE public.projects ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Users can view own projects" ON public.projects;
+DROP POLICY IF EXISTS "Users can create own projects" ON public.projects;
+DROP POLICY IF EXISTS "Users can update own projects" ON public.projects;
+DROP POLICY IF EXISTS "Users can delete own projects" ON public.projects;
 
 CREATE POLICY "Users can view own projects"
     ON public.projects FOR SELECT
@@ -164,6 +180,12 @@ CREATE TABLE IF NOT EXISTS public.ai_generations (
     cache_hit_count INTEGER DEFAULT 0
 );
 
+DROP INDEX IF EXISTS idx_generations_user_id;
+DROP INDEX IF EXISTS idx_generations_project_id;
+DROP INDEX IF EXISTS idx_generations_tool_name;
+DROP INDEX IF EXISTS idx_generations_created_at;
+DROP INDEX IF EXISTS idx_generations_input_hash;
+
 CREATE INDEX idx_generations_user_id ON public.ai_generations(user_id);
 CREATE INDEX idx_generations_project_id ON public.ai_generations(project_id);
 CREATE INDEX idx_generations_tool_name ON public.ai_generations(tool_name);
@@ -172,6 +194,10 @@ CREATE UNIQUE INDEX idx_generations_input_hash ON public.ai_generations(input_ha
 
 -- RLS Policies
 ALTER TABLE public.ai_generations ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Users can view own generations" ON public.ai_generations;
+DROP POLICY IF EXISTS "Users can create own generations" ON public.ai_generations;
+DROP POLICY IF EXISTS "Users can update own generations" ON public.ai_generations;
 
 CREATE POLICY "Users can view own generations"
     ON public.ai_generations FOR SELECT
@@ -208,6 +234,10 @@ CREATE TABLE IF NOT EXISTS public.error_logs (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
+DROP INDEX IF EXISTS idx_error_logs_user_id;
+DROP INDEX IF EXISTS idx_error_logs_error_type;
+DROP INDEX IF EXISTS idx_error_logs_created_at;
+
 CREATE INDEX idx_error_logs_user_id ON public.error_logs(user_id);
 CREATE INDEX idx_error_logs_error_type ON public.error_logs(error_type);
 CREATE INDEX idx_error_logs_created_at ON public.error_logs(created_at DESC);
@@ -240,11 +270,16 @@ CREATE TABLE IF NOT EXISTS public.usage_stats (
     UNIQUE(user_id, stat_date)
 );
 
+DROP INDEX IF EXISTS idx_usage_stats_user_id;
+DROP INDEX IF EXISTS idx_usage_stats_date;
+
 CREATE INDEX idx_usage_stats_user_id ON public.usage_stats(user_id);
 CREATE INDEX idx_usage_stats_date ON public.usage_stats(stat_date DESC);
 
 -- RLS Policies
 ALTER TABLE public.usage_stats ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Users can view own usage stats" ON public.usage_stats;
 
 CREATE POLICY "Users can view own usage stats"
     ON public.usage_stats FOR SELECT
@@ -269,6 +304,9 @@ CREATE TABLE IF NOT EXISTS public.admin_roles (
     UNIQUE(user_id)
 );
 
+DROP INDEX IF EXISTS idx_admin_roles_user_id;
+DROP INDEX IF EXISTS idx_admin_roles_role;
+
 CREATE INDEX idx_admin_roles_user_id ON public.admin_roles(user_id);
 CREATE INDEX idx_admin_roles_role ON public.admin_roles(role);
 
@@ -290,6 +328,10 @@ CREATE TABLE IF NOT EXISTS public.admin_activity_logs (
     ip_address TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
+
+DROP INDEX IF EXISTS idx_admin_logs_admin_id;
+DROP INDEX IF EXISTS idx_admin_logs_action_type;
+DROP INDEX IF EXISTS idx_admin_logs_created_at;
 
 CREATE INDEX idx_admin_logs_admin_id ON public.admin_activity_logs(admin_id);
 CREATE INDEX idx_admin_logs_action_type ON public.admin_activity_logs(action_type);
@@ -333,12 +375,18 @@ CREATE TABLE IF NOT EXISTS public.tool_config (
     updated_by UUID REFERENCES public.user_profiles(id)
 );
 
+DROP INDEX IF EXISTS idx_tool_config_enabled;
+DROP INDEX IF EXISTS idx_tool_config_visible;
+DROP INDEX IF EXISTS idx_tool_config_order;
+
 CREATE INDEX idx_tool_config_enabled ON public.tool_config(is_enabled);
 CREATE INDEX idx_tool_config_visible ON public.tool_config(is_visible);
 CREATE INDEX idx_tool_config_order ON public.tool_config(display_order);
 
 -- RLS: Public read (frontend reads), admin write
 ALTER TABLE public.tool_config ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Anyone can view enabled tools" ON public.tool_config;
 
 CREATE POLICY "Anyone can view enabled tools"
     ON public.tool_config FOR SELECT
@@ -394,6 +442,9 @@ CREATE TABLE IF NOT EXISTS public.prompt_templates (
     UNIQUE(tool_name, version)
 );
 
+DROP INDEX IF EXISTS idx_prompt_templates_tool_name;
+DROP INDEX IF EXISTS idx_prompt_templates_active;
+
 CREATE INDEX idx_prompt_templates_tool_name ON public.prompt_templates(tool_name);
 CREATE INDEX idx_prompt_templates_active ON public.prompt_templates(is_active);
 
@@ -414,15 +465,32 @@ CREATE TABLE IF NOT EXISTS public.system_settings (
     updated_by UUID REFERENCES public.user_profiles(id)
 );
 
+DROP INDEX IF EXISTS idx_system_settings_key;
+
 CREATE INDEX idx_system_settings_key ON public.system_settings(setting_key);
 
 -- RLS: Public read (frontend reads), admin write
 ALTER TABLE public.system_settings ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Anyone can read system settings"
+-- Drop old policy if exists
+DROP POLICY IF EXISTS "Anyone can read system settings" ON public.system_settings;
+DROP POLICY IF EXISTS "Anyone can read public system settings" ON public.system_settings;
+
+-- Create restricted public access policy (only safe settings)
+CREATE POLICY "Anyone can read public system settings"
     ON public.system_settings FOR SELECT
     TO PUBLIC
-    USING (TRUE);
+    USING (
+        setting_key IN (
+            'maintenance_mode',
+            'signup_enabled',
+            'default_language',
+            'default_tone',
+            'default_region',
+            'max_file_size_mb',
+            'max_generation_length'
+        )
+    );
 
 -- Insert default settings
 INSERT INTO public.system_settings (setting_key, setting_value, description, setting_type) VALUES
@@ -455,11 +523,16 @@ CREATE TABLE IF NOT EXISTS public.website_content (
     UNIQUE(page, section, content_key)
 );
 
+DROP INDEX IF EXISTS idx_website_content_page;
+DROP INDEX IF EXISTS idx_website_content_active;
+
 CREATE INDEX idx_website_content_page ON public.website_content(page);
 CREATE INDEX idx_website_content_active ON public.website_content(is_active);
 
 -- RLS: Public read (frontend reads), admin write
 ALTER TABLE public.website_content ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Anyone can read active content" ON public.website_content;
 
 CREATE POLICY "Anyone can read active content"
     ON public.website_content FOR SELECT
@@ -482,6 +555,9 @@ CREATE TABLE IF NOT EXISTS public.content_flags (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
+DROP INDEX IF EXISTS idx_content_flags_generation_id;
+DROP INDEX IF EXISTS idx_content_flags_status;
+
 CREATE INDEX idx_content_flags_generation_id ON public.content_flags(generation_id);
 CREATE INDEX idx_content_flags_status ON public.content_flags(status);
 
@@ -502,6 +578,9 @@ CREATE TABLE IF NOT EXISTS public.user_restrictions (
     expires_at TIMESTAMP WITH TIME ZONE,
     is_active BOOLEAN DEFAULT TRUE
 );
+
+DROP INDEX IF EXISTS idx_user_restrictions_user_id;
+DROP INDEX IF EXISTS idx_user_restrictions_active;
 
 CREATE INDEX idx_user_restrictions_user_id ON public.user_restrictions(user_id);
 CREATE INDEX idx_user_restrictions_active ON public.user_restrictions(is_active);
@@ -618,6 +697,9 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS trigger_update_project_count ON public.projects;
+DROP TRIGGER IF EXISTS trigger_update_generation_count ON public.ai_generations;
+
 CREATE TRIGGER trigger_update_project_count
     AFTER INSERT ON public.projects
     FOR EACH ROW
@@ -637,6 +719,9 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS trigger_user_profiles_updated_at ON public.user_profiles;
+DROP TRIGGER IF EXISTS trigger_projects_updated_at ON public.projects;
+
 CREATE TRIGGER trigger_user_profiles_updated_at
     BEFORE UPDATE ON public.user_profiles
     FOR EACH ROW
@@ -652,11 +737,16 @@ CREATE TRIGGER trigger_projects_updated_at
 -- ============================================
 
 -- Error logs - admin only
+DROP POLICY IF EXISTS "Admins can view all error logs" ON public.error_logs;
+
 CREATE POLICY "Admins can view all error logs"
     ON public.error_logs FOR SELECT
     USING (is_admin(auth.uid()));
 
 -- Admin roles - admin only
+DROP POLICY IF EXISTS "Admins can view admin roles" ON public.admin_roles;
+DROP POLICY IF EXISTS "Super admins can manage admin roles" ON public.admin_roles;
+
 CREATE POLICY "Admins can view admin roles"
     ON public.admin_roles FOR SELECT
     USING (is_admin(auth.uid()));
@@ -673,11 +763,16 @@ CREATE POLICY "Super admins can manage admin roles"
     );
 
 -- Admin logs - admin only
+DROP POLICY IF EXISTS "Admins can view activity logs" ON public.admin_activity_logs;
+
 CREATE POLICY "Admins can view activity logs"
     ON public.admin_activity_logs FOR SELECT
     USING (is_admin(auth.uid()));
 
 -- Content flags - admin only
+DROP POLICY IF EXISTS "Admins can view content flags" ON public.content_flags;
+DROP POLICY IF EXISTS "Admins can manage content flags" ON public.content_flags;
+
 CREATE POLICY "Admins can view content flags"
     ON public.content_flags FOR SELECT
     USING (is_admin(auth.uid()));
@@ -687,6 +782,9 @@ CREATE POLICY "Admins can manage content flags"
     USING (is_admin(auth.uid()));
 
 -- User restrictions - admin only
+DROP POLICY IF EXISTS "Admins can view user restrictions" ON public.user_restrictions;
+DROP POLICY IF EXISTS "Admins can manage user restrictions" ON public.user_restrictions;
+
 CREATE POLICY "Admins can view user restrictions"
     ON public.user_restrictions FOR SELECT
     USING (is_admin(auth.uid()));
@@ -696,21 +794,34 @@ CREATE POLICY "Admins can manage user restrictions"
     USING (is_admin(auth.uid()));
 
 -- Tool config - admin write
+DROP POLICY IF EXISTS "Admins can manage tool config" ON public.tool_config;
+
 CREATE POLICY "Admins can manage tool config"
     ON public.tool_config FOR ALL
     USING (is_admin(auth.uid()));
 
 -- Prompt templates - admin only
+DROP POLICY IF EXISTS "Admins can manage prompts" ON public.prompt_templates;
+
 CREATE POLICY "Admins can manage prompts"
     ON public.prompt_templates FOR ALL
     USING (is_admin(auth.uid()));
 
--- System settings - admin write
+-- System settings - admin access
+DROP POLICY IF EXISTS "Admins can update settings" ON public.system_settings;
+DROP POLICY IF EXISTS "Admins can view all settings" ON public.system_settings;
+
 CREATE POLICY "Admins can update settings"
     ON public.system_settings FOR UPDATE
     USING (is_admin(auth.uid()));
 
+CREATE POLICY "Admins can view all settings"
+    ON public.system_settings FOR SELECT
+    USING (is_admin(auth.uid()));
+
 -- Website content - admin write
+DROP POLICY IF EXISTS "Admins can manage content" ON public.website_content;
+
 CREATE POLICY "Admins can manage content"
     ON public.website_content FOR ALL
     USING (is_admin(auth.uid()));
@@ -754,16 +865,28 @@ GRANT SELECT ON ALL TABLES IN SCHEMA public TO anon;
 -- Success message
 DO $$
 BEGIN
-    RAISE NOTICE '✓ Alphagon database schema created successfully!';
-    RAISE NOTICE '✓ Core tables: user_profiles, projects, ai_generations, error_logs, usage_stats';
-    RAISE NOTICE '✓ Admin tables: admin_roles, tool_config, prompt_templates, system_settings';
-    RAISE NOTICE '✓ Security: RLS policies enabled on all tables';
-    RAISE NOTICE '✓ Tools: 15 default tools configured';
-    RAISE NOTICE '✓ Settings: Default system settings initialized';
     RAISE NOTICE '';
-    RAISE NOTICE 'Next steps:';
-    RAISE NOTICE '1. Create your first admin user via Supabase dashboard';
-    RAISE NOTICE '2. Add an entry to admin_roles table for that user';
-    RAISE NOTICE '3. Configure your Gemini API key in .env';
-    RAISE NOTICE '4. Run: npm install && npm run dev';
+    RAISE NOTICE '========================================';
+    RAISE NOTICE '✓ Alphagon Database Schema Updated!';
+    RAISE NOTICE '========================================';
+    RAISE NOTICE '';
+    RAISE NOTICE 'Core Tables: user_profiles, projects, ai_generations, error_logs, usage_stats';
+    RAISE NOTICE 'Admin Tables: admin_roles, tool_config, prompt_templates, system_settings';
+    RAISE NOTICE 'Security: RLS policies enabled on all tables';
+    RAISE NOTICE 'Tools: 15 default tools configured';
+    RAISE NOTICE 'Settings: Default system settings initialized';
+    RAISE NOTICE '';
+    RAISE NOTICE '⚡ Updates Applied:';
+    RAISE NOTICE '  - Email verification disabled (auto-confirm on signup)';
+    RAISE NOTICE '  - System settings restricted (only public-safe settings exposed)';
+    RAISE NOTICE '  - Admin-only access for sensitive configuration';
+    RAISE NOTICE '  - All policies updated with DROP IF EXISTS for safe re-run';
+    RAISE NOTICE '';
+    RAISE NOTICE 'Next Steps:';
+    RAISE NOTICE '  1. First signup will auto-create and login user';
+    RAISE NOTICE '  2. Promote user to admin: INSERT INTO admin_roles (user_id, role) VALUES (''user-id'', ''super_admin'')';
+    RAISE NOTICE '  3. Configure Gemini API key in .env';
+    RAISE NOTICE '  4. Access admin panel at /admin';
+    RAISE NOTICE '';
+    RAISE NOTICE '========================================';
 END $$;

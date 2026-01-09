@@ -132,11 +132,17 @@
         const data = await response.json();
 
         if (!response.ok) {
+          // Handle specific email confirmation error
+          if (data.error && data.error.includes('Email not confirmed')) {
+            throw new Error('⚠️ Email not confirmed. Please check Supabase Dashboard → Authentication → Settings and disable "Enable email confirmations"');
+          }
           throw new Error(data.error || 'Login failed');
         }
 
-        // Store token
-        localStorage.setItem('token', data.token);
+        // Store session data
+        if (data.data && data.data.session) {
+          localStorage.setItem('supabase.auth.token', JSON.stringify(data.data.session));
+        }
 
         // Redirect to dashboard
         window.location.href = '/dashboard';
