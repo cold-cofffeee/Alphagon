@@ -12,6 +12,36 @@ export type Platform =
   | 'Descriptions' 
   | 'Growth';
 
+export type UserRole = 'Admin' | 'Support' | 'User';
+export type UserStatus = 'Active' | 'Suspended' | 'Banned';
+
+export interface UserAccount {
+  id: string;
+  email: string;
+  role: UserRole;
+  status: UserStatus;
+  credits: number;
+  tokensConsumed: number;
+  lastActive: number;
+}
+
+export interface AIModuleConfig {
+  id: Platform;
+  isEnabled: boolean;
+  model: 'gemini-3-pro-preview' | 'gemini-3-flash-preview';
+  systemPrompt: string;
+  creditCost: number;
+  safetyThreshold: number;
+}
+
+export interface SystemLog {
+  id: string;
+  timestamp: number;
+  level: 'INFO' | 'WARNING' | 'ERROR';
+  event: string;
+  user?: string;
+}
+
 export interface ContentAnalysis {
   transcript: string;
   summary: string;
@@ -30,7 +60,7 @@ export interface GenerationSettings {
 
 export interface AIScore {
   label: string;
-  score: number; // 0-100
+  score: number;
 }
 
 export interface LogicTrace {
