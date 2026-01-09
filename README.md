@@ -4,21 +4,28 @@ A fully integrated AI-powered SaaS platform with Supabase backend, featuring cod
 
 ## ⚡ Quick Start
 
-**New to the project?** Start with [SETUP.md](./SETUP.md) for a step-by-step guide!
-
 ```bash
 # 1. Install dependencies
 npm install
 
-# 2. Apply migrations (see SETUP.md for detailed instructions)
-#    Go to: https://supabase.com/dashboard/project/zrlotbiptnwakwedgovq
-#    SQL Editor → Run each migration file in order
+# 2. Configure .env file
+cp .env.example .env
+# Add your Supabase & Gemini API keys
 
-# 3. Verify setup
-npm run verify
+# 3. Apply database schema
+# Go to: https://supabase.com/dashboard/project/zrlotbiptnwakwedgovq/editor
+# Copy & paste contents of: supabase/database-setup.sql
+# Click RUN
 
 # 4. Start development
 npm run dev
+```
+
+### Create Your First Admin
+
+After signing up, run this in Supabase SQL Editor:
+```sql
+UPDATE users SET role = 'super_admin' WHERE email = 'your-email@example.com';
 ```
 
 ## 🚀 Features
@@ -42,90 +49,69 @@ npm run dev
 
 ## 🛠️ Setup
 
-### 1. Clone and Install
+### 1. Install Dependencies
 
 ```bash
-git clone <your-repo-url>
-cd Alphagon
 npm install
 ```
 
-### 2. Environment Configuration
-
-Copy `.env.example` to `.env` and fill in your Supabase credentials (already done):
-
-```env
-VITE_SUPABASE_URL=your_supabase_url
-VITE_SUPABASE_ANON_KEY=your_anon_key
-SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
-VITE_ENVIRONMENT=local
-```
-
-### 3. Database Setup
-
-#### Option A: Using Supabase CLI (Recommended)
+### 2. Configure Environment
 
 ```bash
-# Install Supabase CLI
-npm install -g supabase
+# Copy example env file
+cp .env.example .env
 
-# Login
-supabase login
-
-# Link your project
-supabase link --project-ref zrlotbiptnwakwedgovq
-
-# Push migrations
-supabase db push
+# Edit .env and add your keys:
+# - VITE_SUPABASE_URL
+# - VITE_SUPABASE_ANON_KEY
+# - SUPABASE_SERVICE_ROLE_KEY
+# - GEMINI_API_KEY
 ```
 
-#### Option B: Manual via Dashboard
+### 3. Apply Database Schema
 
-1. Go to [Supabase Dashboard](https://supabase.com/dashboard/project/zrlotbiptnwakwedgovq)
-2. Navigate to SQL Editor
-3. Copy and execute each file in `supabase/migrations/` in order:
-   - `001_initial_schema.sql`
-   - `002_rls_policies.sql`
-   - `003_functions_triggers.sql`
-   - `004_seed_data.sql`
+1. Open [Supabase SQL Editor](https://supabase.com/dashboard/project/zrlotbiptnwakwedgovq/editor)
+2. Open `supabase/database-setup.sql` in your code editor
+3. Copy the entire contents
+4. Paste into Supabase SQL Editor
+5. Click "RUN"
+6. Wait for success message (should take ~5 seconds)
 
-### 4. Run Development Server
+### 4. Start Development
 
 ```bash
 npm run dev
 ```
+
+Visit http://localhost:3000 (configured in vite.config.ts)
 
 ## 📁 Project Structure
 
 ```
 Alphagon/
 ├── supabase/
-│   ├── migrations/           # Database migration files
-│   │   ├── 001_initial_schema.sql
-│   │   ├── 002_rls_policies.sql
-│   │   ├── 003_functions_triggers.sql
-│   │   └── 004_seed_data.sql
-│   ├── migrate.ts           # Migration runner
-│   └── README.md            # Migration documentation
+│   └── database-setup.sql   # Complete database schema (copy & paste to Supabase)
 ├── lib/
-│   └── supabase.ts          # Supabase client setup
+│   └── supabase.ts          # Supabase client
 ├── types/
-│   └── database.types.ts    # TypeScript database types
+│   └── database.types.ts    # TypeScript types
 ├── services/                # Data access layer
-│   ├── authService.ts       # Authentication
-│   ├── userService.ts       # User management
-│   ├── creditService.ts     # Credit transactions
-│   ├── generationService.ts # AI generations
-│   ├── planService.ts       # Subscription plans
-│   ├── auditService.ts      # Audit logging
-│   ├── supportServices.ts   # Vault, flags, risk
-│   └── index.ts             # Service exports
+│   ├── authService.ts
+│   ├── userService.ts
+│   ├── creditService.ts
+│   ├── generationService.ts
+│   ├── planService.ts
+│   ├── auditService.ts
+│   └── supportServices.ts
 ├── contexts/
-│   └── AuthContext.tsx      # Auth state management
+│   └── AuthContext.tsx      # Auth state
+├── hooks/                   # React hooks
+│   ├── useCredits.ts
+│   ├── useGeneration.ts
+│   └── usePlans.ts
 ├── components/              # React components
 ├── .env                     # Environment variables (gitignored)
-├── .env.example             # Example env file
-└── package.json
+└── .env.example             # Example env file
 ```
 
 ## 🗄️ Database Schema

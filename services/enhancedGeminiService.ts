@@ -163,28 +163,39 @@ export const enhancedGeminiService = {
   },
 
   /**
-   * Call Gemini API (replace with your actual implementation)
+   * Call Gemini API (integrated with existing geminiService)
    */
   async callGeminiAPI(prompt: string, model: string): Promise<any> {
-    // TODO: Integrate your existing Gemini API logic here
-    // This is a placeholder that should be replaced with your actual geminiService
+    // Import the existing Gemini service dynamically to avoid circular deps
+    const { GoogleGenAI } = await import('@google/genai');
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     
-    // Example structure:
-    /*
-    const result = await geminiService.generate({
-      prompt,
-      model,
+    // Use the appropriate model based on request
+    const geminiModel = model.includes('flash') ? 'gemini-3-flash-preview' : 'gemini-3-pro-preview';
+    
+    const response = await ai.models.generateContent({
+      model: geminiModel,
+      contents: prompt,
     });
     
+    const text = response.text?.trim() || '';
+    
+    // Estimate tokens (rough approximation: 1 token ≈ 4 characters)
+    const promptTokens = Math.ceil(prompt.length / 4);
+    const completionTokens = Math.ceil(text.length / 4);
+    const totalTokens = promptTokens + completionTokens;
+    
+    // Calculate cost (Gemini pricing: ~$0.001 per 1K tokens for pro, $0.0005 for flash)
+    const costPer1kTokens = model.includes('flash') ? 0.0005 : 0.001;
+    const cost = (totalTokens / 1000) * costPer1kTokens;
+    
     return {
-      content: result.text,
-      promptTokens: result.usage?.promptTokens || 0,
-      completionTokens: result.usage?.completionTokens || 0,
-      cost: calculateCost(result.usage),
+      content: text,
+      promptTokens,
+      completionTokens,
+      totalTokens,
+      cost,
     };
-    */
-
-    throw new Error('Gemini API integration not yet implemented');
   },
 
   /**
