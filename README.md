@@ -1,259 +1,334 @@
 # 🎯 Alphagon - Intelligence over volume
 
-**Alphagon** is an AI-powered content intelligence workspace for content creators. Transform a single video or audio file into multiple high-impact, platform-specific content assets with modular, on-demand AI generation.
+**Alphagon** is a production-ready, full-stack AI-powered content intelligence web application for content creators. Transform a single video or audio file into multiple high-impact, platform-specific content assets using Google Gemini AI with intelligent caching and modular, on-demand generation.
 
 ---
 
-## ✨ Features
+## 🏗️ Architecture
 
-### 📥 Media Processing
-- **Video & Audio Upload**: Drag-and-drop or browse to upload
-- **Automatic Audio Extraction**: Converts video to audio automatically
-- **AI Transcription**: Transcribes audio to text for AI processing
-- **Editable Transcriptions**: Manually edit transcriptions before generation
+### Tech Stack
+- **Backend**: Node.js + TypeScript + Express
+- **Database**: Supabase (PostgreSQL) with Row Level Security
+- **AI Provider**: Google Gemini 2.0 Flash (via Generative Language API)
+- **Frontend**: Vanilla JavaScript (multi-page application)
+- **Authentication**: Supabase Auth
 
-### 🎛️ Global Settings
-Control how all AI tools generate content:
-- **Target Region**: Global or country-specific optimization
-- **Emotion**: Emotional, Logical, Inspirational, Aggressive, Friendly, Authoritative
-- **Tone**: Casual, Professional, Storytelling, Educational
-- **Language**: English, Bangla, or Mixed
-- **Creator Preferences**: Custom notes to guide AI style
-
-### 🧠 AI Content Tools
-
-#### Content Generation
-- **Thumbnail Text Copy Generator**: Eye-catching thumbnail text
-- **SEO Title Generator**: Search-optimized titles
-
-#### Platform-Specific Content
-- **YouTube**: Optimized titles, descriptions, timestamps
-- **Facebook**: Engagement-driven posts
-- **Twitter/X**: Viral-ready tweets under 280 chars
-- **Instagram Reels**: Hashtag-rich captions
-- **Blog**: Article titles and introductions
-
-#### Descriptions
-- **Short Description**: 100-150 word summaries
-- **Long-Form Description**: Comprehensive descriptions
-
-#### Marketing
-- **Ad Copy Generator**: Conversion-focused ad variations
-- **Hooks Generator**: Attention-grabbing opening lines
-
-#### Content Expansion
-- **More Ideas (Same Angle)**: Similar content variations
-- **More Ideas (Different Angles)**: Fresh perspectives and twists
-
-#### Optimization
-- **Improvement Suggestions**: Strategic recommendations
-- **Competitor Analysis**: Niche-based competitive insights
+### Key Features
+- **🔐 Secure Authentication**: Signup/login with Supabase
+- **💾 Smart Caching**: AI responses cached in database to save tokens
+- **🎯 Modular AI Tools**: 15+ specialized content generation tools
+- **📊 Usage Tracking**: Token usage, cache hits, generation stats
+- **🌐 Multi-language**: English, Bangla, Mixed
+- **🎨 Clean UI**: Professional SaaS-style interface
 
 ---
 
-## 🚀 Getting Started
+## 📁 Project Structure
 
-### Quick Start
-1. Open `index.html` in a modern web browser
-2. Upload a video or audio file
-3. Wait for automatic transcription
-4. Configure global settings
-5. Click "Generate" on any tool
-6. Copy and use the generated content
-
-### File Structure
 ```
 Alphagon/
-├── index.html      # Main HTML structure
-├── styles.css      # Modern, clean UI styling
-├── app.js          # Application logic & AI prompt system
-├── prompts.md      # Detailed AI prompt templates
-└── README.md       # This file
+├── src/
+│   ├── server.ts                 # Main Express server
+│   ├── config/
+│   │   └── index.ts              # Environment configuration
+│   ├── services/
+│   │   ├── supabase.service.ts   # Database operations
+│   │   └── gemini.service.ts     # AI generation with Gemini
+│   ├── routes/
+│   │   ├── auth.routes.ts        # Authentication endpoints
+│   │   ├── user.routes.ts        # User profile & settings
+│   │   ├── project.routes.ts     # Project CRUD
+│   │   └── generate.routes.ts    # AI content generation
+│   ├── middleware/
+│   │   ├── auth.middleware.ts    # JWT authentication
+│   │   └── error.middleware.ts   # Error handling
+│   ├── types/
+│   │   └── index.ts              # TypeScript definitions
+│   └── utils/
+│       └── helpers.ts            # Utility functions
+├── public/
+│   └── index.html                # Homepage
+├── pages/
+│   ├── dashboard.html            # Main app workspace
+│   ├── login.html                # Login page
+│   ├── signup.html               # Signup page
+│   ├── settings.html             # User settings
+│   └── about.html                # About/philosophy
+├── css/
+│   └── main.css                  # Global styles
+├── js/
+│   └── dashboard.js              # Dashboard client logic
+├── setup.sql                     # Supabase database schema
+├── package.json                  # Dependencies
+├── tsconfig.json                 # TypeScript configuration
+├── .env.example                  # Environment variables template
+└── README.md                     # This file
 ```
 
 ---
 
-## 🔧 Technical Architecture
+## 🚀 Quick Start
 
-### Frontend Stack
-- **HTML5**: Semantic, accessible structure
-- **CSS3**: Modern grid/flexbox layout, responsive design
-- **Vanilla JavaScript**: No dependencies, pure ES6+
+### 1. Prerequisites
+- Node.js 18+ installed
+- Supabase account
+- Google Gemini API key
 
-### AI Integration Points
-The application is designed to integrate with AI APIs:
-- **Transcription**: OpenAI Whisper, AssemblyAI, Deepgram, Google Speech-to-Text
-- **Content Generation**: OpenAI GPT-4, Anthropic Claude, Google Gemini
+### 2. Database Setup
 
-### Current Implementation
-- **Demo Mode**: Generates mock content for testing
-- **Production Ready**: Structured for easy API integration
+1. Go to your Supabase project dashboard
+2. Navigate to SQL Editor
+3. Copy and paste the entire content of `setup.sql`
+4. Run the SQL script
+5. This will create all tables, indexes, RLS policies, triggers, and functions
+
+### 3. Environment Configuration
+
+1. Copy the example environment file:
+```bash
+cp .env.example .env
+```
+
+2. Edit `.env` and fill in your values:
+```env
+# Your values are already in .env.example
+# Just add your Gemini API key:
+GEMINI_API_KEY=your_actual_gemini_api_key_here
+```
+
+### 4. Install Dependencies
+
+```bash
+npm install
+```
+
+### 5. Run Development Server
+
+```bash
+npm run dev
+```
+
+The server will start on `http://localhost:3000`
+
+### 6. Build for Production
+
+```bash
+npm run build
+npm start
+```
+
+---
+
+## 🎯 API Endpoints
+
+### Authentication
+- `POST /api/auth/signup` - Create new account
+- `POST /api/auth/login` - Sign in
+- `POST /api/auth/logout` - Sign out
+
+### User
+- `GET /api/user/profile` - Get user profile
+- `PATCH /api/user/profile` - Update settings
+- `GET /api/user/stats` - Dashboard statistics
+- `GET /api/user/usage` - Usage statistics
+
+### Projects
+- `POST /api/projects` - Create project
+- `GET /api/projects` - List projects
+- `GET /api/projects/:id` - Get project
+- `PATCH /api/projects/:id` - Update project
+- `DELETE /api/projects/:id` - Delete project
+- `GET /api/projects/:id/generations` - Get all generations
+
+### AI Generation
+- `POST /api/generate/content` - Generate AI content (with caching)
+- `POST /api/generate/transcribe` - Transcribe audio
+- `POST /api/generate/:id/rate` - Rate generation
+
+---
+
+## 🧠 AI Tools (15 Modular Generators)
+
+All tools use Google Gemini 2.0 Flash with custom prompt templates:
+
+### Content Generation
+1. **Thumbnail Text Copy** - Eye-catching thumbnail text
+2. **SEO Title** - Search-optimized titles
+
+### Platform-Specific
+3. **YouTube** - Title + description with timestamps
+4. **Facebook** - Engagement-driven posts
+5. **Twitter/X** - Viral tweets under 280 chars
+6. **Instagram Reels** - Hashtag-rich captions
+7. **Blog** - Article title + introduction
+
+### Descriptions
+8. **Short Description** - 100-150 word summaries
+9. **Long-Form Description** - Comprehensive descriptions
+
+### Marketing
+10. **Ad Copy** - Conversion-focused variations
+11. **Hooks** - Attention-grabbing openers
+
+### Content Expansion
+12. **More Ideas (Same Angle)** - Similar variations
+13. **More Ideas (Fresh Angles)** - New perspectives
+
+### Optimization
+14. **Improvement Suggestions** - Strategic recommendations
+15. **Competitor Analysis** - Niche-based insights
+
+---
+
+## 💾 Database Schema
+
+The `setup.sql` file creates:
+
+### Tables
+- `user_profiles` - Extended user data & preferences
+- `projects` - User projects with media & transcriptions
+- `ai_generations` - All AI outputs with caching
+- `error_logs` - Error tracking for debugging
+- `usage_stats` - Daily usage metrics per user
+
+### Key Features
+- **Row Level Security (RLS)** - Users can only access their own data
+- **Automatic Triggers** - Update counts, cache stats automatically
+- **Smart Caching** - Hash-based deduplication of AI generations
+- **Usage Tracking** - Token usage, cache hit rates, per-tool analytics
+
+---
+
+## 🔒 Security
+
+- **Environment Variables**: Never hardcode API keys
+- **Row Level Security**: Database-level access control
+- **JWT Authentication**: Supabase-managed tokens
+- **Rate Limiting**: Prevent API abuse
+- **Helmet.js**: Security headers
+- **Input Sanitization**: XSS prevention
+
+---
+
+## 💰 Cost Optimization
+
+### Intelligent Caching
+- AI responses are hashed and cached in database
+- Identical requests return cached results instantly
+- Saves Gemini API tokens and reduces costs
+- Cache hit rate tracked per user
+
+### Token Tracking
+- Every generation logs input/output tokens
+- Usage stats aggregated daily
+- View token consumption in dashboard
+
+---
+
+## 📱 Application Pages
+
+### Public Pages
+1. **Homepage** (`/`) - Landing page with product overview
+2. **Login** (`/login`) - User authentication
+3. **Signup** (`/signup`) - New account creation
+4. **About** (`/about`) - Philosophy and mission
+
+### Authenticated Pages
+5. **Dashboard** (`/dashboard`) - Main workspace with all tools
+6. **Settings** (`/settings`) - User preferences and defaults
 
 ---
 
 ## 🎨 Design Philosophy
 
-### UI/UX Principles
-- **White Mode**: Clean, professional appearance
-- **Three-Panel Layout**: Input → Tools → Output
+- **White Mode Only**: Clean, professional appearance
+- **Desktop-First**: Optimized for creator workflows
 - **Modular Control**: Each tool triggers independently
 - **No Auto-Generation**: User maintains full control
-- **Clear Visual Hierarchy**: Important elements stand out
-- **Smooth Transitions**: Professional feel without distraction
-
-### Color Palette
-- **Primary**: #3b82f6 (Blue)
-- **Background**: #f8f9fa (Light Gray)
-- **Text**: #1a1a1a (Near Black)
-- **Borders**: #e5e7eb (Light Border)
-- **Accents**: #6b7280 (Medium Gray)
+- **Precision over Automation**: Intelligence over volume
 
 ---
 
-## 🔌 API Integration Guide
+## �️ Development
 
-### Transcription API Integration
+### Adding New AI Tools
 
-Replace the mock transcription in `app.js`:
+1. Add tool definition to `src/types/index.ts`:
+```typescript
+export const TOOLS: ToolConfig[] = [
+  // ... existing tools
+  {
+    name: 'new-tool',
+    label: 'New Tool Name',
+    description: 'What this tool does',
+    category: 'generation',
+    promptTemplate: 'new-tool'
+  }
+];
+```
 
-```javascript
-async transcribeAudio(audioBlob, fileName) {
-    // Example: OpenAI Whisper API
-    const formData = new FormData();
-    formData.append('file', audioBlob);
-    formData.append('model', 'whisper-1');
-
-    const response = await fetch('https://api.openai.com/v1/audio/transcriptions', {
-        method: 'POST',
-        headers: {
-            'Authorization': `Bearer YOUR_API_KEY`
-        },
-        body: formData
-    });
-
-    const data = await response.json();
-    return data.text;
+2. Add prompt template to `src/services/gemini.service.ts`:
+```typescript
+private getToolPrompt(tool: ToolName): string {
+  const prompts: Record<ToolName, string> = {
+    // ... existing prompts
+    'new-tool': `Your custom prompt template here`
+  };
 }
 ```
 
-### Content Generation API Integration
+3. Add UI card to `pages/dashboard.html`
 
-Replace the mock generation in `app.js`:
+### Extending the API
 
-```javascript
-async generateAIContent(tool) {
-    const prompt = this.buildPrompt(tool);
-    
-    // Example: OpenAI GPT-4 API
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer YOUR_API_KEY`
-        },
-        body: JSON.stringify({
-            model: 'gpt-4',
-            messages: [
-                { role: 'system', content: 'You are an expert content creator and marketer.' },
-                { role: 'user', content: prompt }
-            ],
-            temperature: 0.7,
-            max_tokens: 1000
-        })
-    });
-
-    const data = await response.json();
-    return data.choices[0].message.content;
-}
-```
+Add new routes in `src/routes/` and register in `src/server.ts`
 
 ---
 
-## 📝 AI Prompt System
+## 📊 Monitoring & Analytics
 
-Each tool uses a carefully crafted prompt that includes:
-1. **Transcription**: The source content
-2. **Global Settings**: Region, emotion, tone, language, preferences
-3. **Tool-Specific Instructions**: Unique requirements per tool
-4. **Quality Guidelines**: Avoid generic content, optimize for platform
+### Built-in Metrics
+- Total projects per user
+- Total generations per user
+- Token usage tracking
+- Cache hit rate
+- Per-tool usage statistics
+- Daily usage trends
 
-See `prompts.md` for complete prompt templates.
+### Error Logging
+All errors automatically logged to `error_logs` table with:
+- Error type and message
+- Stack trace
+- Request context
+- User and project IDs
 
----
-
-## 🎯 Use Cases
-
-### For Content Creators
-- Repurpose long-form content into platform-specific posts
-- Generate SEO-optimized titles and descriptions
-- Create engaging thumbnails and hooks
-- Expand content ideas efficiently
-
-### For Marketing Teams
-- Generate conversion-focused ad copy
-- Create platform-specific campaigns
-- Analyze competitive landscape
-- Optimize content strategy
-
-### For Social Media Managers
-- Batch create content variations
-- Maintain consistent brand voice
-- Optimize for each platform's algorithm
-- Save hours of manual writing
+Access via Supabase dashboard for debugging
 
 ---
 
-## 🔒 Privacy & Data
+## 🚨 Troubleshooting
 
-- **No Database**: All processing happens client-side
-- **No Authentication**: No user accounts or login required
-- **Session-Based**: Data cleared when you close the browser
-- **API Integration**: You control which services to use
+### Common Issues
 
----
+**Database connection fails**
+- Verify Supabase credentials in `.env`
+- Check if `setup.sql` has been run
+- Ensure RLS policies are enabled
 
-## 🌐 Browser Compatibility
+**Gemini API errors**
+- Verify API key is correct
+- Check API quota/limits in Google AI Studio
+- Ensure model name is correct (`gemini-2.0-flash-exp`)
 
-- **Chrome**: 90+ ✅
-- **Firefox**: 88+ ✅
-- **Safari**: 14+ ✅
-- **Edge**: 90+ ✅
+**Authentication fails**
+- Clear browser localStorage
+- Check Supabase Auth settings
+- Verify JWT token expiration
 
-Requires modern browser with ES6+ support.
-
----
-
-## 📱 Responsive Design
-
-- **Desktop-First**: Optimized for content creation workflows
-- **Tablet-Friendly**: Adaptive layout for medium screens
-- **Mobile-Compatible**: Functional on smaller devices
-
----
-
-## 🚧 Future Enhancements
-
-### Planned Features
-- [ ] Export to multiple formats (PDF, Markdown, JSON)
-- [ ] Batch processing for multiple files
-- [ ] Custom prompt templates
-- [ ] Content calendar integration
-- [ ] Team collaboration features
-- [ ] Analytics and performance tracking
-- [ ] A/B testing for generated content
-- [ ] Browser extension for quick access
-- [ ] Mobile app versions
-
----
-
-## 🤝 Contributing
-
-This is a prototype/template project. To customize:
-
-1. **Modify Prompts**: Edit prompt templates in `app.js`
-2. **Add Tools**: Create new tool cards in `index.html`
-3. **Customize Styling**: Adjust colors and layouts in `styles.css`
-4. **Integrate APIs**: Replace mock functions with real API calls
+**No generations appearing**
+- Check browser console for errors
+- Verify project has transcription
+- Check API endpoint in Network tab
 
 ---
 
@@ -263,47 +338,29 @@ This project is provided as-is for educational and commercial use.
 
 ---
 
-## 💡 Pro Tips
+## 🙏 Acknowledgments
 
-### For Best Results
-1. **Clean Audio**: Better transcription = better outputs
-2. **Detailed Transcriptions**: Edit and enhance transcriptions
-3. **Use Creator Notes**: Guide AI with specific preferences
-4. **Experiment with Settings**: Try different emotion/tone combinations
-5. **Iterate**: Generate multiple times, pick the best
-
-### Performance
-- Process shorter audio clips for faster transcription
-- Generate outputs one at a time for accuracy
-- Clear outputs regularly to keep interface clean
-
----
-
-## 📞 Support & Documentation
-
-For questions, issues, or feature requests:
-- Review the code comments in `app.js`
-- Check AI prompt templates in `prompts.md`
-- Examine the HTML structure in `index.html`
-
----
-
-## 🎓 Learning Resources
-
-### Recommended APIs
-- **OpenAI**: GPT-4, Whisper (https://openai.com/api)
-- **Anthropic**: Claude (https://anthropic.com)
-- **AssemblyAI**: Speech-to-text (https://assemblyai.com)
-- **Deepgram**: Audio transcription (https://deepgram.com)
-
-### Integration Tutorials
-- OpenAI API Documentation
-- Fetch API MDN Guide
-- FormData for file uploads
-- CORS and API security best practices
+- **Google Gemini** - AI generation
+- **Supabase** - Database and authentication
+- **Express.js** - Backend framework
+- **TypeScript** - Type safety
 
 ---
 
 **Built with precision. Designed for creators. Powered by intelligence.**
 
 **Alphagon** - *Intelligence over volume.*
+
+---
+
+## 📞 Next Steps
+
+1. ✅ Run `npm install`
+2. ✅ Set up `.env` with your API keys
+3. ✅ Run `setup.sql` in Supabase
+4. ✅ Run `npm run dev`
+5. ✅ Open `http://localhost:3000`
+6. ✅ Sign up and start creating
+
+For issues or questions, check the code comments in `src/` files for detailed implementation notes.
+
