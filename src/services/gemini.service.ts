@@ -56,31 +56,49 @@ class GeminiService {
   }
 
   // ============================================
-  // TRANSCRIPTION (Using Gemini if needed)
+  // TRANSCRIPTION (Using Gemini 2.0 Flash with audio/video support)
   // ============================================
 
-  async transcribeAudio(audioContent: string): Promise<string> {
-    // Note: Gemini 2.0 Flash supports audio input
-    // This is a placeholder - implement based on your audio handling needs
+  async transcribeMedia(base64Data: string, mimeType: string): Promise<string> {
     try {
-      const prompt = `Transcribe the following audio content accurately. 
-      Return only the transcription text without any additional commentary.`;
+      const prompt = `Transcribe the following audio/video content accurately and completely. 
+      Return only the transcription text without any additional commentary, explanations, or formatting.
+      Transcribe every word spoken in the content.`;
 
       const result = await this.model.generateContent([
         prompt,
         {
           inlineData: {
-            mimeType: 'audio/mp3',
-            data: audioContent,
+            mimeType: mimeType,
+            data: base64Data,
           },
         },
       ]);
 
-      return result.response.text();
+      const transcription = result.response.text().trim();
+      
+      if (!transcription || transcription.length < 10) {
+        throw new Error('Transcription returned empty or too short result');
+      }
+
+      return transcription;
     } catch (error: any) {
       console.error('Transcription Error:', error);
-      throw new Error(`Transcription failed: ${error.message}`);
+      
+      // Provide more detailed error messages
+      if (error.message?.includes('quota')) {
+        throw new Error('API quota exceeded. Please try again later.');
+      } else if (error.message?.includes('invalid')) {
+        throw new Error('Invalid file format. Please upload a valid audio/video file.');
+      } else {
+        throw new Error(`Transcription failed: ${error.message || 'Unknown error'}`);
+      }
     }
+  }
+
+  // Legacy method for backward compatibility
+  async transcribeAudio(audioContent: string): Promise<string> {
+    return this.transcribeMedia(audioContent, 'audio/mp3');
   }
 
   // ============================================

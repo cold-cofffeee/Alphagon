@@ -146,12 +146,33 @@ class SupabaseService {
     userId: string,
     projectData: CreateProjectRequest
   ): Promise<Project> {
+    // Map camelCase to snake_case for database
+    const dbData: any = {
+      user_id: userId,
+      title: projectData.title,
+      description: projectData.description,
+      original_filename: projectData.originalFilename,
+      file_type: projectData.fileType,
+      file_size: projectData.fileSize,
+      transcription: projectData.transcription,
+      transcription_language: projectData.transcriptionLanguage,
+      emotion: projectData.emotion,
+      tone: projectData.tone,
+      language: projectData.language,
+      target_region: projectData.targetRegion,
+      creator_notes: projectData.creatorNotes,
+    };
+
+    // Remove undefined fields
+    Object.keys(dbData).forEach(key => {
+      if (dbData[key] === undefined) {
+        delete dbData[key];
+      }
+    });
+
     const { data, error } = await this.client
       .from('projects')
-      .insert({
-        user_id: userId,
-        ...projectData,
-      })
+      .insert(dbData)
       .select()
       .single();
 

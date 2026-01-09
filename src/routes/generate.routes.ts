@@ -4,6 +4,7 @@
 // ============================================
 
 import { Router, Request, Response } from 'express';
+import multer from 'multer';
 import { supabaseService } from '../services/supabase.service';
 import { geminiService } from '../services/gemini.service';
 import { authenticateUser } from '../middleware/auth.middleware';
@@ -12,6 +13,14 @@ import { generateInputHash } from '../utils/helpers';
 import { ToolName, TOOLS } from '../types';
 
 const router = Router();
+
+// Configure multer for file uploads (memory storage for immediate processing)
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 10 * 1024 * 1024 * 1024, // 10GB limit
+  },
+});
 
 // All routes require authentication
 router.use(authenticateUser);
@@ -138,49 +147,77 @@ router.post('/content', asyncHandler(async (req: Request, res: Response) => {
 
 /**
  * POST /api/generate/transcribe
- * Transcribe audio (placeholder - implement based on audio handling)
+ * Transcribe audio/video file using Gemini
  */
-router.post('/transcribe', asyncHandler(async (req: Request, res: Response) => {
+router.post('/transcribe', upload.single('file'), asyncHandler(async (req: Request, res: Response) => {
   const userId = req.user!.id;
-  const { projectId, audioData } = req.body;
+  const file = req.file;
 
   // Validation
-  if (!projectId || !audioData) {
+  if (!file) {
     return res.status(400).json({
       success: false,
-      error: 'projectId and audioData are required',
+      error: 'No file uploaded',
     });
   }
 
-  // Get project
-  const project = await supabaseService.getProject(projectId, userId);
-  if (!project) {
-    return res.status(404).json({
+  // Validate file type
+  const allowedMimeTypes = [
+    'video/mp4',
+    'video/quicktime',
+    'video/x-msvideo',
+    'video/webm',
+    'audio/mpeg',
+    'audio/wav',
+    'audio/mp4',
+    'audio/x-m4a',
+    'audio/webm',
+    'audio/ogg',
+  ];
+
+  if (!allowedMimeTypes.includes(file.mimetype)) {
+    return res.status(400).json({
       success: false,
-      error: 'Project not found',
+      error: 'Invalid file type. Please upload an audio or video file.',
     });
   }
 
-  // Transcribe audio
-  // Note: This is a placeholder. In production, you'd:
-  // 1. Handle file upload properly
-  // 2. Convert video to audio if needed
-  // 3. Use Gemini or another service to transcribe
-  const transcription = await geminiService.transcribeAudio(audioData);
+  try {
+    // Convert buffer to base64 for Gemini API
+    const base64Data = file.buffer.toString('base64');
 
-  // Update project with transcription
-  await supabaseService.updateProject(projectId, userId, {
-    transcription,
-  });
+    // Determine mime type for Gemini
+    let geminiMimeType = file.mimetype;
+    
+    // Transcribe using Gemini
+    const transcription = await geminiService.transcribeMedia(base64Data, geminiMimeType);
 
-  res.json({
-    success: true,
-    data: {
+    // Create a project for this file
+    const project = await supabaseService.createProject(userId, {
+      title: file.originalname || 'Untitled Project',
+      originalFilename: file.originalname,
+      fileType: file.mimetype.startsWith('video/') ? 'video' : 'audio',
+      fileSize: file.size,
       transcription,
-      language: 'english',
-    },
-    message: 'Audio transcribed successfully',
-  });
+      transcriptionLanguage: 'english', // Can be detected if needed
+    });
+
+    res.json({
+      success: true,
+      data: {
+        transcription,
+        language: 'english',
+        projectId: project.id,
+      },
+      message: 'File transcribed successfully',
+    });
+  } catch (error: any) {
+    console.error('Transcription error:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message || 'Failed to transcribe file',
+    });
+  }
 }));
 
 /**

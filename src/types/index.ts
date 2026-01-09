@@ -177,6 +177,11 @@ export interface TranscribeResponse {
 export interface CreateProjectRequest {
   title?: string;
   description?: string;
+  originalFilename?: string;
+  fileType?: string;
+  fileSize?: number;
+  transcription?: string;
+  transcriptionLanguage?: string;
   emotion?: EmotionType;
   tone?: ToneType;
   language?: LanguageType;
