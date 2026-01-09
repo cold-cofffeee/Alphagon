@@ -1,0 +1,8 @@
+{
+  "name": "Alphagon",
+  "description": "A creator-focused AI workspace that transforms video and audio into high-impact, platform-ready content with precision and control.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
