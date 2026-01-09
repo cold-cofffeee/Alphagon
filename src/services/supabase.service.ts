@@ -48,27 +48,24 @@ class SupabaseService {
     });
 
     if (error) throw error;
+    if (!data.user) throw new Error('User creation failed');
     
     // Create user profile immediately
-    if (data.user) {
-      await this.createUserProfile({
-        id: data.user.id,
-        email: data.user.email!,
-        full_name: fullName || '',
-      });
-      
-      // Sign in the user immediately to get session
-      const { data: sessionData, error: signInError } = await this.client.auth.signInWithPassword({
-        email,
-        password,
-      });
-      
-      if (signInError) throw signInError;
-      
-      return sessionData;
-    }
+    await this.createUserProfile({
+      id: data.user.id,
+      email: data.user.email!,
+      full_name: fullName || '',
+    });
     
-    return data;
+    // Sign in the user immediately to get session
+    const { data: sessionData, error: signInError } = await this.client.auth.signInWithPassword({
+      email,
+      password,
+    });
+    
+    if (signInError) throw signInError;
+    
+    return sessionData;
   }
 
   async signIn(email: string, password: string) {
