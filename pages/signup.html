@@ -87,7 +87,8 @@
 
         // Store session token if returned
         if (data.data && data.data.session) {
-          localStorage.setItem('supabase.auth.token', JSON.stringify(data.data.session));
+          localStorage.setItem('token', data.data.session.access_token);
+          localStorage.setItem('refresh_token', data.data.session.refresh_token);
         }
 
         // Redirect to dashboard immediately

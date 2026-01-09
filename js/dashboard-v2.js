@@ -121,23 +121,23 @@ class AlphagonApp {
   }
 
   createToolCard(tool) {
-    const card = document.createElement('div');
-    card.className = 'tool-card';
-    card.innerHTML = `
-      <h3>${tool.display_name}</h3>
-      <p>${tool.description}</p>
-      <button class="btn-generate" data-tool="${tool.tool_name}">
-        Generate ${tool.display_name}
-      </button>
+    const button = document.createElement('button');
+    button.className = 'tool-button';
+    button.setAttribute('data-tool', tool.tool_name);
+    button.innerHTML = `
+      <div class="tool-icon">${tool.icon || '🎯'}</div>
+      <div class="tool-info">
+        <div class="tool-name">${tool.display_name}</div>
+        <div class="tool-desc">${tool.description}</div>
+      </div>
     `;
 
     // Add click listener
-    const button = card.querySelector('.btn-generate');
     button.addEventListener('click', () => {
       this.generateContent(tool.tool_name, button, tool);
     });
 
-    return card;
+    return button;
   }
 
   // ============================================
@@ -379,29 +379,30 @@ class AlphagonApp {
   // ============================================
 
   addOutput(toolName, toolDisplayName, content, cached = false) {
-    const outputSection = document.querySelector('.output-section');
-    if (!outputSection) return;
-
-    outputSection.style.display = 'block';
-
-    const outputContainer = document.getElementById('outputContainer');
+    const outputPlaceholder = document.getElementById('outputPlaceholder');
+    const outputContainer = document.getElementById('outputsContainer');
+    
     if (!outputContainer) return;
 
+    // Hide placeholder
+    if (outputPlaceholder) {
+      outputPlaceholder.style.display = 'none';
+    }
+
     const outputCard = document.createElement('div');
-    outputCard.className = 'output-card';
+    outputCard.className = 'output-section';
     outputCard.innerHTML = `
       <div class="output-header">
-        <h3>${toolDisplayName}</h3>
-        <div class="output-actions">
-          ${cached ? '<span class="badge cached">Cached</span>' : ''}
-          <button class="btn-icon" onclick="copyToClipboard(this)" title="Copy">📋</button>
-          <button class="btn-icon" onclick="downloadText(this)" title="Download">⬇️</button>
-          <button class="btn-icon" onclick="deleteOutput(this)" title="Delete">🗑️</button>
+        <span class="output-label">${toolDisplayName}</span>
+        <div style="display: flex; gap: var(--space-2); align-items: center;">
+          ${cached ? '<span class="badge badge-neutral" style="font-size: var(--font-size-xs);">Cached</span>' : ''}
+          <button class="btn btn-ghost btn-sm" onclick="copyToClipboard(this)" title="Copy">📋</button>
+          <button class="btn btn-ghost btn-sm" onclick="deleteOutput(this)" title="Delete">🗑️</button>
         </div>
       </div>
       <div class="output-content" contenteditable="true">${content}</div>
-      <div class="output-footer">
-        <small>Generated ${new Date().toLocaleTimeString()}</small>
+      <div style="margin-top: var(--space-3); font-size: var(--font-size-xs); color: var(--color-text-muted);">
+        Generated ${new Date().toLocaleTimeString()}
       </div>
     `;
 
@@ -411,7 +412,7 @@ class AlphagonApp {
   setupOutputActions() {
     // These are global functions called from the output card buttons
     window.copyToClipboard = (button) => {
-      const content = button.closest('.output-card').querySelector('.output-content').textContent;
+      const content = button.closest('.output-section').querySelector('.output-content').textContent;
       navigator.clipboard.writeText(content);
       button.textContent = '✓';
       setTimeout(() => {
@@ -419,25 +420,36 @@ class AlphagonApp {
       }, 2000);
     };
 
-    window.downloadText = (button) => {
-      const card = button.closest('.output-card');
-      const toolName = card.querySelector('h3').textContent;
-      const content = card.querySelector('.output-content').textContent;
-
-      const blob = new Blob([content], { type: 'text/plain' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${toolName}-${Date.now()}.txt`;
-      a.click();
-      URL.revokeObjectURL(url);
-    };
-
     window.deleteOutput = (button) => {
       if (confirm('Delete this output?')) {
-        button.closest('.output-card').remove();
+        const card = button.closest('.output-section');
+        card.remove();
+        
+        // Show placeholder if no outputs remain
+        const outputContainer = document.getElementById('outputsContainer');
+        const outputPlaceholder = document.getElementById('outputPlaceholder');
+        if (outputContainer && outputContainer.children.length === 0 && outputPlaceholder) {
+          outputPlaceholder.style.display = 'block';
+        }
       }
     };
+
+    // Clear all outputs
+    const clearBtn = document.getElementById('clearOutputsBtn');
+    if (clearBtn) {
+      clearBtn.addEventListener('click', () => {
+        if (confirm('Clear all outputs?')) {
+          const outputContainer = document.getElementById('outputsContainer');
+          const outputPlaceholder = document.getElementById('outputPlaceholder');
+          if (outputContainer) {
+            outputContainer.innerHTML = '';
+          }
+          if (outputPlaceholder) {
+            outputPlaceholder.style.display = 'block';
+          }
+        }
+      });
+    }
   }
 
   // ============================================
