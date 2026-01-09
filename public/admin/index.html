@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel - Alphagon</title>
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+  <div class="admin-layout">
+    <!-- Sidebar Navigation -->
+    <aside class="admin-sidebar">
+      <div class="admin-brand">
+        <h1>Alphagon</h1>
+        <span class="admin-badge">ADMIN</span>
+      </div>
+
+      <nav class="admin-nav">
+        <a href="#dashboard" class="nav-item active" data-view="dashboard">
+          <span class="icon">📊</span>
+          <span>Dashboard</span>
+        </a>
+        <a href="#users" class="nav-item" data-view="users">
+          <span class="icon">👥</span>
+          <span>Users</span>
+        </a>
+        <a href="#tools" class="nav-item" data-view="tools">
+          <span class="icon">🛠️</span>
+          <span>Tools</span>
+        </a>
+        <a href="#prompts" class="nav-item" data-view="prompts">
+          <span class="icon">💬</span>
+          <span>Prompts</span>
+        </a>
+        <a href="#settings" class="nav-item" data-view="settings">
+          <span class="icon">⚙️</span>
+          <span>Settings</span>
+        </a>
+        <a href="#content" class="nav-item" data-view="content">
+          <span class="icon">📝</span>
+          <span>Content</span>
+        </a>
+        <a href="#flags" class="nav-item" data-view="flags">
+          <span class="icon">🚩</span>
+          <span>Moderation</span>
+        </a>
+        <a href="#analytics" class="nav-item" data-view="analytics">
+          <span class="icon">📈</span>
+          <span>Analytics</span>
+        </a>
+        <a href="#logs" class="nav-item" data-view="logs">
+          <span class="icon">📋</span>
+          <span>Logs</span>
+        </a>
+      </nav>
+
+      <div class="admin-footer">
+        <button class="btn-secondary" onclick="window.location.href='/'">
+          ← Back to Site
+        </button>
+        <button class="btn-danger" onclick="logout()">
+          Logout
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="admin-main">
+      <div id="view-container">
+        <!-- Dynamic content loads here -->
+      </div>
+    </main>
+  </div>
+
+  <!-- Templates -->
+  <template id="dashboard-template">
+    <div class="admin-view">
+      <header class="view-header">
+        <h2>Dashboard Overview</h2>
+        <div class="header-actions">
+          <button class="btn-secondary" onclick="refreshDashboard()">↻ Refresh</button>
+        </div>
+      </header>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">Total Users</div>
+          <div class="stat-value" id="stat-users">-</div>
+          <div class="stat-change" id="stat-users-change">-</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Active Projects</div>
+          <div class="stat-value" id="stat-projects">-</div>
+          <div class="stat-change" id="stat-projects-change">-</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Generations Today</div>
+          <div class="stat-value" id="stat-generations">-</div>
+          <div class="stat-change" id="stat-generations-change">-</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Active Admins</div>
+          <div class="stat-value" id="stat-admins">-</div>
+        </div>
+      </div>
+
+      <div class="dashboard-grid">
+        <div class="card">
+          <div class="card-header">
+            <h3>Tool Usage (24h)</h3>
+          </div>
+          <div class="card-body">
+            <div id="tool-usage-chart"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3>Recent Activity</h3>
+          </div>
+          <div class="card-body">
+            <div id="recent-logs"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <template id="users-template">
+    <div class="admin-view">
+      <header class="view-header">
+        <h2>User Management</h2>
+        <div class="header-actions">
+          <input type="search" id="user-search" placeholder="Search users..." class="search-input">
+          <button class="btn-secondary">Export CSV</button>
+        </div>
+      </header>
+
+      <div class="filters">
+        <select id="user-filter-role">
+          <option value="">All Roles</option>
+          <option value="user">User</option>
+          <option value="admin">Admin</option>
+        </select>
+        <select id="user-filter-status">
+          <option value="">All Status</option>
+          <option value="active">Active</option>
+          <option value="restricted">Restricted</option>
+        </select>
+      </div>
+
+      <div class="table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th><input type="checkbox" id="select-all-users"></th>
+              <th>Email</th>
+              <th>Full Name</th>
+              <th>Projects</th>
+              <th>Generations</th>
+              <th>Status</th>
+              <th>Joined</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="users-table-body">
+            <!-- Dynamic rows -->
+          </tbody>
+        </table>
+      </div>
+
+      <div class="pagination">
+        <button class="btn-secondary" id="users-prev">← Prev</button>
+        <span id="users-page-info">Page 1</span>
+        <button class="btn-secondary" id="users-next">Next →</button>
+      </div>
+    </div>
+  </template>
+
+  <template id="tools-template">
+    <div class="admin-view">
+      <header class="view-header">
+        <h2>Tool Configuration</h2>
+        <div class="header-actions">
+          <button class="btn-secondary">Bulk Edit</button>
+          <button class="btn-primary" onclick="saveAllTools()">💾 Save All Changes</button>
+        </div>
+      </header>
+
+      <div class="tools-grid" id="tools-grid">
+        <!-- Dynamic tool cards -->
+      </div>
+    </div>
+  </template>
+
+  <template id="prompts-template">
+    <div class="admin-view">
+      <header class="view-header">
+        <h2>Prompt Templates</h2>
+        <div class="header-actions">
+          <select id="prompt-filter-tool" onchange="filterPrompts()">
+            <option value="">All Tools</option>
+          </select>
+          <button class="btn-primary" onclick="createNewPrompt()">+ New Prompt</button>
+        </div>
+      </header>
+
+      <div class="prompts-list" id="prompts-list">
+        <!-- Dynamic prompt cards -->
+      </div>
+    </div>
+  </template>
+
+  <template id="settings-template">
+    <div class="admin-view">
+      <header class="view-header">
+        <h2>System Settings</h2>
+        <div class="header-actions">
+          <button class="btn-primary" onclick="saveSettings()">💾 Save Settings</button>
+        </div>
+      </header>
+
+      <div class="settings-sections">
+        <div class="card">
+          <div class="card-header">
+            <h3>⚠️ Critical Settings</h3>
+          </div>
+          <div class="card-body settings-group" id="critical-settings">
+            <!-- Dynamic settings -->
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3>🎨 Default Values</h3>
+          </div>
+          <div class="card-body settings-group" id="default-settings">
+            <!-- Dynamic settings -->
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3>⚡ Performance</h3>
+          </div>
+          <div class="card-body settings-group" id="performance-settings">
+            <!-- Dynamic settings -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <script src="/js/admin.js"></script>
+</body>
+</html>

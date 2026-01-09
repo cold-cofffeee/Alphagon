@@ -171,7 +171,6 @@ router.post('/transcribe', asyncHandler(async (req: Request, res: Response) => {
   // Update project with transcription
   await supabaseService.updateProject(projectId, userId, {
     transcription,
-    transcription_language: 'english', // Detect language
   });
 
   res.json({

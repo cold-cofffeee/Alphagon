@@ -16,6 +16,8 @@ import authRoutes from './routes/auth.routes';
 import userRoutes from './routes/user.routes';
 import projectRoutes from './routes/project.routes';
 import generateRoutes from './routes/generate.routes';
+import adminRoutes from './routes/admin.routes';
+import configRoutes from './routes/config.routes';
 
 // Validate environment configuration
 validateConfig();
@@ -64,10 +66,15 @@ app.use('/pages', express.static(path.join(__dirname, '../pages')));
 // API ROUTES
 // ============================================
 
+// Public configuration endpoints (no auth required)
+app.use('/api/config', configRoutes);
+
+// Authenticated routes
 app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/generate', generateRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
@@ -107,6 +114,10 @@ app.get('/settings', (req, res) => {
 
 app.get('/about', (req, res) => {
   res.sendFile(path.join(__dirname, '../pages/about.html'));
+});
+
+app.get('/admin', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/admin/index.html'));
 });
 
 // ============================================
