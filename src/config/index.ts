@@ -36,9 +36,9 @@ export const config = {
     max: 100, // limit each IP to 100 requests per windowMs
   },
   
-  // File Upload Limits
+  // File Upload Configuration
   upload: {
-    maxFileSize: 100 * 1024 * 1024, // 100MB
+    maxFileSize: Infinity, // No limit - server-side processing
     allowedMimeTypes: [
       'video/mp4',
       'video/quicktime',

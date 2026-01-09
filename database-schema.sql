@@ -500,7 +500,7 @@ INSERT INTO public.system_settings (setting_key, setting_value, description, set
     ('default_language', '"english"', 'Default language for new users', 'string'),
     ('default_tone', '"casual"', 'Default tone for new users', 'string'),
     ('default_region', '"global"', 'Default region for new users', 'string'),
-    ('max_file_size_mb', '10', 'Maximum upload file size in MB', 'number'),
+    ('max_file_size_mb', '0', 'Maximum upload file size in MB (0 = unlimited)', 'number'),
     ('max_generation_length', '2000', 'Maximum generation length in characters', 'number'),
     ('cache_ttl_hours', '168', 'Cache time-to-live in hours (7 days)', 'number')
 ON CONFLICT (setting_key) DO NOTHING;

@@ -48,9 +48,9 @@ const limiter = rateLimit({
 });
 app.use('/api/', limiter);
 
-// Body parsers
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+// Body parsers (no size limit - server-side processing)
+app.use(express.json({ limit: '50gb' }));
+app.use(express.urlencoded({ extended: true, limit: '50gb' }));
 
 // ============================================
 // STATIC FILES

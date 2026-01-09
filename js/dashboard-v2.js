@@ -240,13 +240,9 @@ class AlphagonApp {
   }
 
   validateFile(file) {
-    const maxSize = systemConfig.max_file_size_mb || 10; // Admin-controlled
     const allowedTypes = ['audio/', 'video/'];
 
-    if (file.size > maxSize * 1024 * 1024) {
-      alert(`File size must be less than ${maxSize}MB`);
-      return false;
-    }
+    // No file size limit - processed server-side
 
     if (!allowedTypes.some((type) => file.type.startsWith(type))) {
       alert('Please upload an audio or video file');
