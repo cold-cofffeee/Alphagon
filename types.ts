@@ -28,10 +28,30 @@ export interface GenerationSettings {
   targetAudience: string;
 }
 
+export interface AIScore {
+  label: string;
+  score: number; // 0-100
+}
+
+export interface LogicTrace {
+  detectedEmotion: string;
+  audienceAssumption: string;
+  platformBias: string;
+}
+
+export interface ContentVersion {
+  id: string;
+  body: string;
+  scores: AIScore[];
+  risks: string[];
+  trace: LogicTrace;
+  timestamp: number;
+}
+
 export interface HistoryItem {
   id: string;
   platform: Platform;
-  content: string;
+  versions: ContentVersion[];
   timestamp: number;
   sourceTopic: string;
 }
