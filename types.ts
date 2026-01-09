@@ -25,6 +25,37 @@ export interface UserAccount {
   lastActive: number;
 }
 
+export type AuditAction = 
+  | 'USER_SUSPEND' 
+  | 'USER_ACTIVATE' 
+  | 'CREDIT_GRANT' 
+  | 'CREDIT_REFUND' 
+  | 'AI_MODEL_CHANGE' 
+  | 'PROMPT_VERSION_UPDATE' 
+  | 'PLAN_OVERRIDE'
+  | 'SYSTEM_CONFIG_CHANGE';
+
+export interface AuditLog {
+  id: string;
+  timestamp: number;
+  actor: {
+    id: string;
+    email: string;
+    role: UserRole;
+  };
+  action: AuditAction;
+  entity: {
+    type: 'USER' | 'AI_MODULE' | 'BILLING' | 'SYSTEM';
+    id: string;
+  };
+  context: {
+    before?: any;
+    after?: any;
+    ip?: string;
+    reason?: string;
+  };
+}
+
 export interface AIModuleConfig {
   id: Platform;
   isEnabled: boolean;
