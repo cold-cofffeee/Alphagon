@@ -5,19 +5,17 @@ import {
   Settings2, 
   BarChart3, 
   Zap, 
-  MousePointer2,
   Clock,
-  History,
   Mic,
   Trash2,
   Loader2,
-  CheckCircle2,
-  Lightbulb,
-  Search,
-  Database
+  Database,
+  Coins,
+  Plus
 } from 'lucide-react';
 import FileUpload from './components/FileUpload';
 import ModuleCard from './components/ModuleCard';
+import CreditModal from './components/CreditModal';
 import { analyzeMedia, generatePlatformContent, generateInsights, parseVoiceSettings } from './services/geminiService';
 import { ContentAnalysis, GenerationSettings, Insight, Platform, HistoryItem, ContentVersion } from './types';
 import { EMOTIONS, TONES, REGIONS, LANGUAGES, MODULES } from './constants';
@@ -26,10 +24,18 @@ const App: React.FC = () => {
   const [analysis, setAnalysis] = useState<ContentAnalysis | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [insights, setInsights] = useState<Insight | null>(null);
+  const [isCreditModalOpen, setIsCreditModalOpen] = useState(false);
+  
+  const [credits, setCredits] = useState<number>(() => {
+    const saved = localStorage.getItem('alphagon_credits');
+    return saved ? parseInt(saved) : 20; // 20 free starting credits
+  });
+
   const [history, setHistory] = useState<HistoryItem[]>(() => {
     const saved = localStorage.getItem('alphagon_history');
     return saved ? JSON.parse(saved) : [];
   });
+
   const [view, setView] = useState<'workspace' | 'history'>('workspace');
   const [isRecording, setIsRecording] = useState(false);
   const [isVoiceProcessing, setIsVoiceProcessing] = useState(false);
@@ -48,6 +54,10 @@ const App: React.FC = () => {
     localStorage.setItem('alphagon_history', JSON.stringify(history));
   }, [history]);
 
+  useEffect(() => {
+    localStorage.setItem('alphagon_credits', credits.toString());
+  }, [credits]);
+
   const handleMediaUpload = async (base64: string, mimeType: string) => {
     setIsProcessing(true);
     try {
@@ -60,6 +70,11 @@ const App: React.FC = () => {
     } finally {
       setIsProcessing(false);
     }
+  };
+
+  const handleSelectCredits = (amount: number) => {
+    setCredits(prev => prev + amount);
+    setIsCreditModalOpen(false);
   };
 
   const startRecording = async () => {
@@ -96,8 +111,20 @@ const App: React.FC = () => {
 
   const handleGenerate = async (platform: Platform): Promise<Omit<ContentVersion, 'id' | 'timestamp'>> => {
     if (!analysis) throw new Error("No analysis");
+    
+    const moduleInfo = MODULES.find(m => m.id === platform);
+    const cost = moduleInfo?.creditCost || 1;
+    
+    if (credits < cost) {
+      setIsCreditModalOpen(true);
+      throw new Error("Insufficient credits");
+    }
+
     const result = await generatePlatformContent(platform, analysis, settings);
     
+    // Deduct credits
+    setCredits(prev => prev - cost);
+
     const newVersion: ContentVersion = {
       ...result,
       id: Math.random().toString(36).substr(2, 9),
@@ -128,8 +155,14 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#000000] selection:bg-indigo-500/30">
+      <CreditModal 
+        isOpen={isCreditModalOpen} 
+        onClose={() => setIsCreditModalOpen(false)} 
+        onSelect={handleSelectCredits} 
+      />
+
       <header className="sticky top-0 z-50 bg-[#000000]/90 backdrop-blur-2xl border-b border-zinc-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
           <div className="flex items-center space-x-3 cursor-pointer" onClick={() => setView('workspace')}>
             <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center shadow-2xl border border-indigo-400/20">
               <Sparkles className="w-6 h-6 text-white" />
@@ -139,14 +172,36 @@ const App: React.FC = () => {
               <p className="text-[10px] text-zinc-500 uppercase tracking-[0.2em] font-bold -mt-1">Intelligence over volume</p>
             </div>
           </div>
-          <nav className="flex items-center space-x-1">
-            <button onClick={() => setView('workspace')} className={`px-4 py-2 text-sm font-medium transition-colors ${view === 'workspace' ? 'text-white' : 'text-zinc-500 hover:text-zinc-300'}`}>Workspace</button>
-            <button onClick={() => setView('history')} className={`px-4 py-2 text-sm font-medium transition-colors flex items-center space-x-2 ${view === 'history' ? 'text-white' : 'text-zinc-500 hover:text-zinc-300'}`}>
-              <Database className="w-4 h-4" />
-              <span>Vault</span>
-              {history.length > 0 && <span className="bg-indigo-600 text-[10px] px-1.5 py-0.5 rounded-full text-white min-w-[1.2rem] text-center">{history.length}</span>}
-            </button>
-          </nav>
+          
+          <div className="flex items-center space-x-6">
+            <nav className="hidden md:flex items-center space-x-1">
+              <button onClick={() => setView('workspace')} className={`px-4 py-2 text-sm font-medium transition-colors ${view === 'workspace' ? 'text-white' : 'text-zinc-500 hover:text-zinc-300'}`}>Workspace</button>
+              <button onClick={() => setView('history')} className={`px-4 py-2 text-sm font-medium transition-colors flex items-center space-x-2 ${view === 'history' ? 'text-white' : 'text-zinc-500 hover:text-zinc-300'}`}>
+                <Database className="w-4 h-4" />
+                <span>Vault</span>
+              </button>
+            </nav>
+
+            <div className="h-8 w-px bg-zinc-800 hidden md:block" />
+
+            <div className="flex items-center space-x-4">
+              <div className="bg-zinc-900 border border-zinc-800 rounded-2xl px-4 py-2 flex items-center space-x-3 group transition-colors hover:border-indigo-500/50">
+                <div className="p-1.5 bg-indigo-500/10 rounded-lg">
+                  <Coins className="w-4 h-4 text-indigo-400 group-hover:animate-pulse" />
+                </div>
+                <div className="flex flex-col items-start leading-none">
+                  <span className="text-white font-bold text-sm tracking-tight">{credits.toLocaleString()}</span>
+                  <span className="text-[9px] text-zinc-500 font-extrabold uppercase tracking-widest">Credits</span>
+                </div>
+                <button 
+                  onClick={() => setIsCreditModalOpen(true)}
+                  className="p-1.5 bg-zinc-800 rounded-lg text-zinc-400 hover:bg-indigo-600 hover:text-white transition-all shadow-inner"
+                >
+                  <Plus className="w-3 h-3" />
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </header>
 
@@ -256,7 +311,6 @@ const App: React.FC = () => {
             </aside>
 
             <div className="lg:col-span-9 space-y-10">
-              {/* Context Header with Cached Transcript info */}
               <div className="bg-zinc-900 border border-zinc-800 rounded-[2.5rem] p-10 shadow-2xl relative overflow-hidden group">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-600/5 blur-[120px] rounded-full -mr-32 -mt-32" />
                 <div className="relative flex flex-col md:flex-row md:items-start justify-between gap-8">
@@ -278,7 +332,7 @@ const App: React.FC = () => {
                     </button>
                     <div className="bg-zinc-800/50 px-3 py-1.5 rounded-xl border border-zinc-700/50 flex items-center space-x-2">
                        <Database className="w-3 h-3 text-indigo-400" />
-                       <span className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest">Transcript Cached</span>
+                       <span className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest">Transcript Cached (Free)</span>
                     </div>
                   </div>
                 </div>
@@ -299,6 +353,8 @@ const App: React.FC = () => {
                         description={module.description} 
                         onGenerate={() => handleGenerate(module.id as Platform)}
                         versions={itemInHistory?.versions || []}
+                        userCredits={credits}
+                        onLowCredits={() => setIsCreditModalOpen(true)}
                       />
                     );
                   })}

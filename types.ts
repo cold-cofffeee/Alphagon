@@ -63,3 +63,12 @@ export interface Insight {
   opportunities: string[];
   differentiationIdeas: string[];
 }
+
+export interface CreditPlan {
+  id: string;
+  name: string;
+  price: string;
+  credits: number;
+  features: string[];
+  recommended?: boolean;
+}

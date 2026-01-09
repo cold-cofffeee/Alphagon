@@ -3,29 +3,44 @@ import React, { useState } from 'react';
 import { 
   Loader2, Copy, Check, ChevronDown, ChevronUp, Share2, 
   Sparkles, AlertTriangle, Info, Download, FileText, 
-  Columns, ChevronLeft, ChevronRight, BarChart2
+  Columns, ChevronLeft, ChevronRight, BarChart2, Zap
 } from 'lucide-react';
 import { Platform, ContentVersion, AIScore } from '../types';
-import { PLATFORM_ICONS } from '../constants';
+import { PLATFORM_ICONS, MODULES } from '../constants';
 
 interface ModuleCardProps {
   platform: Platform;
   description: string;
   onGenerate: () => Promise<Omit<ContentVersion, 'id' | 'timestamp'>>;
   versions: ContentVersion[];
+  userCredits: number;
+  onLowCredits: () => void;
 }
 
-const ModuleCard: React.FC<ModuleCardProps> = ({ platform, description, onGenerate, versions: initialVersions }) => {
+const ModuleCard: React.FC<ModuleCardProps> = ({ 
+  platform, 
+  description, 
+  onGenerate, 
+  versions: initialVersions,
+  userCredits,
+  onLowCredits
+}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [versions, setVersions] = useState<ContentVersion[]>(initialVersions);
   const [currentVersionIdx, setCurrentVersionIdx] = useState(initialVersions.length > 0 ? initialVersions.length - 1 : -1);
   const [copied, setCopied] = useState(false);
-  const [isExpanded, setIsExpanded] = useState(true);
   const [showTrace, setShowTrace] = useState(false);
 
   const currentVersion = versions[currentVersionIdx];
+  const moduleInfo = MODULES.find(m => m.id === platform);
+  const creditCost = moduleInfo?.creditCost || 1;
 
   const handleGenerate = async () => {
+    if (userCredits < creditCost) {
+      onLowCredits();
+      return;
+    }
+
     setIsLoading(true);
     try {
       const result = await onGenerate();
@@ -95,12 +110,10 @@ const ModuleCard: React.FC<ModuleCardProps> = ({ platform, description, onGenera
         </div>
         
         <div className="flex items-center space-x-3">
-          {!currentVersion && !isLoading && (
-            <div className="text-right mr-2 hidden md:block">
-              <p className="text-[10px] text-zinc-600 font-bold uppercase tracking-widest">Est. Cost: 2.5k Tokens</p>
-              <p className="text-[9px] text-indigo-400 font-bold uppercase">1 Credit Required</p>
-            </div>
-          )}
+          <div className="text-right mr-2 hidden md:flex items-center space-x-2 bg-indigo-500/5 px-3 py-1.5 rounded-xl border border-indigo-500/10">
+            <Zap className="w-3 h-3 text-indigo-400" />
+            <span className="text-[10px] text-indigo-400 font-bold uppercase tracking-widest">{creditCost} Credits</span>
+          </div>
           <button 
             disabled={isLoading}
             onClick={handleGenerate}
@@ -117,7 +130,6 @@ const ModuleCard: React.FC<ModuleCardProps> = ({ platform, description, onGenera
       
       {currentVersion && (
         <div className="p-6 bg-black/30 space-y-4">
-          {/* Version Selector & Scores */}
           <div className="flex flex-wrap items-center justify-between gap-4 border-b border-zinc-800 pb-4">
             <div className="flex items-center space-x-2">
               <button 
@@ -128,7 +140,7 @@ const ModuleCard: React.FC<ModuleCardProps> = ({ platform, description, onGenera
                 <ChevronLeft className="w-4 h-4" />
               </button>
               <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">
-                Version {currentVersionIdx + 1} of {versions.length}
+                V{currentVersionIdx + 1} / {versions.length}
               </span>
               <button 
                 disabled={currentVersionIdx === versions.length - 1}
@@ -154,7 +166,6 @@ const ModuleCard: React.FC<ModuleCardProps> = ({ platform, description, onGenera
             </div>
           </div>
 
-          {/* Risks & Content */}
           <div className="space-y-4">
             {currentVersion.risks.length > 0 && (
               <div className="flex flex-wrap gap-2">
@@ -179,7 +190,6 @@ const ModuleCard: React.FC<ModuleCardProps> = ({ platform, description, onGenera
             </div>
           </div>
 
-          {/* Action Bar */}
           <div className="flex items-center justify-between pt-4 border-t border-zinc-800">
             <button 
               onClick={() => setShowTrace(!showTrace)}
