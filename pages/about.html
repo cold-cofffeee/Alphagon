@@ -4,114 +4,95 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>About - Alphagon</title>
-  <link rel="stylesheet" href="/css/main.css">
-  <style>
-    body {
-      background: #f8f9fa;
-    }
-    .about-container {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 40px 20px;
-    }
-    .about-header {
-      text-align: center;
-      margin-bottom: 60px;
-    }
-    .about-header h1 {
-      font-size: 48px;
-      margin-bottom: 16px;
-    }
-    .about-header p {
-      font-size: 20px;
-      color: #666;
-    }
-    .section {
-      background: white;
-      padding: 40px;
-      border-radius: 12px;
-      margin-bottom: 30px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-    }
-    .section h2 {
-      margin-bottom: 20px;
-      color: #667eea;
-    }
-    .section p {
-      line-height: 1.8;
-      color: #444;
-      margin-bottom: 16px;
-    }
-    .back-link {
-      text-align: center;
-      margin-top: 40px;
-    }
-    .back-link a {
-      color: #667eea;
-      text-decoration: none;
-      font-weight: 500;
-    }
-  </style>
+  <link rel="stylesheet" href="/css/design-system.css">
 </head>
 <body>
-  <div class="about-container">
-    <div class="about-header">
-      <h1>🎯 Alphagon</h1>
-      <p>Intelligence over volume.</p>
+  <header class="app-header">
+    <div class="app-header-content">
+      <div>
+        <div class="app-logo">Alphagon</div>
+        <div class="app-tagline">Intelligence over volume.</div>
+      </div>
+      <nav class="flex gap-4">
+        <a href="/dashboard" class="btn btn-ghost">Dashboard</a>
+        <a href="/settings" class="btn btn-ghost">Settings</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="container container-narrow" style="padding-top: 4rem; padding-bottom: 4rem;">
+    <div style="text-align: center; margin-bottom: 4rem;">
+      <h1 class="text-hero mb-4">🎯 Alphagon</h1>
+      <p class="text-subsection text-muted">Intelligence over volume.</p>
     </div>
 
-    <div class="section">
-      <h2>Our Philosophy</h2>
-      <p>
-        In a world drowning in content, creators need precision, not more noise. Alphagon transforms your single piece of content into multiple platform-specific, high-impact assets—saving you hours of manual work while maintaining quality.
-      </p>
-      <p>
-        We believe in intelligent automation. Our AI doesn't just generate text—it understands context, audience, and platform nuances to create content that resonates.
-      </p>
+    <div class="card mb-6">
+      <div class="card-header">
+        <h2 class="card-title">Our Philosophy</h2>
+      </div>
+      <div class="card-body">
+        <p class="text-body mb-4">
+          In a world drowning in content, creators need precision, not more noise. Alphagon transforms your single piece of content into multiple platform-specific, high-impact assets—saving you hours of manual work while maintaining quality.
+        </p>
+        <p class="text-body">
+          We believe in intelligent automation. Our AI doesn't just generate text—it understands context, audience, and platform nuances to create content that resonates.
+        </p>
+      </div>
     </div>
 
-    <div class="section">
-      <h2>What Makes Us Different</h2>
-      <p>
-        <strong>Smart Caching:</strong> We save your AI responses, preventing duplicate API calls and saving you money. Same input? Instant results from cache.
-      </p>
-      <p>
-        <strong>Modular Tools:</strong> Generate only what you need, when you need it. 15+ specialized tools for different platforms and purposes.
-      </p>
-      <p>
-        <strong>Admin Control:</strong> Enterprise-grade admin panel gives you complete control over tools, prompts, settings, and users.
-      </p>
-      <p>
-        <strong>Security First:</strong> Row-level security, JWT authentication, and role-based access control protect your data.
-      </p>
+    <div class="card mb-6">
+      <div class="card-header">
+        <h2 class="card-title">What Makes Us Different</h2>
+      </div>
+      <div class="card-body">
+        <p class="text-body mb-4">
+          <strong>Smart Caching:</strong> We save your AI responses, preventing duplicate API calls and saving you money. Same input? Instant results from cache.
+        </p>
+        <p class="text-body mb-4">
+          <strong>Modular Tools:</strong> Generate only what you need, when you need it. 15+ specialized tools for different platforms and purposes.
+        </p>
+        <p class="text-body mb-4">
+          <strong>Admin Control:</strong> Enterprise-grade admin panel gives you complete control over tools, prompts, settings, and users.
+        </p>
+        <p class="text-body">
+          <strong>Security First:</strong> Row-level security, JWT authentication, and role-based access control protect your data.
+        </p>
+      </div>
     </div>
 
-    <div class="section">
-      <h2>Technology Stack</h2>
-      <p>
-        Built with modern, production-ready technologies:
-      </p>
-      <ul style="line-height: 1.8; color: #444;">
-        <li><strong>Backend:</strong> Node.js + TypeScript + Express</li>
-        <li><strong>Database:</strong> Supabase (PostgreSQL) with Row Level Security</li>
-        <li><strong>AI:</strong> Google Gemini 2.0 Flash for intelligent content generation</li>
-        <li><strong>Frontend:</strong> Config-driven vanilla JavaScript (reads from admin panel)</li>
-        <li><strong>Architecture:</strong> Single Source of Truth - admin panel controls everything</li>
-      </ul>
+    <div class="card mb-6">
+      <div class="card-header">
+        <h2 class="card-title">Technology Stack</h2>
+      </div>
+      <div class="card-body">
+        <p class="text-body mb-4">Built with modern, production-ready technologies:</p>
+        <ul style="line-height: 1.8; color: var(--color-text-secondary); padding-left: var(--space-6);">
+          <li class="mb-2"><strong>Backend:</strong> Node.js + TypeScript + Express</li>
+          <li class="mb-2"><strong>Database:</strong> Supabase (PostgreSQL) with Row Level Security</li>
+          <li class="mb-2"><strong>AI:</strong> Google Gemini 2.0 Flash for intelligent content generation</li>
+          <li class="mb-2"><strong>Frontend:</strong> Config-driven vanilla JavaScript (reads from admin panel)</li>
+          <li><strong>Architecture:</strong> Single Source of Truth - admin panel controls everything</li>
+        </ul>
+      </div>
     </div>
 
-    <div class="section">
-      <h2>For Content Creators</h2>
-      <p>
-        Whether you're a YouTuber, podcaster, blogger, or social media creator, Alphagon helps you repurpose your content efficiently. Upload once, generate for all platforms.
-      </p>
-      <p>
-        Stop wasting time on repetitive content creation. Focus on what matters—creating great content. Let Alphagon handle the distribution.
-      </p>
+    <div class="card mb-8">
+      <div class="card-header">
+        <h2 class="card-title">For Content Creators</h2>
+      </div>
+      <div class="card-body">
+        <p class="text-body mb-4">
+          Whether you're a YouTuber, podcaster, blogger, or social media creator, Alphagon helps you repurpose your content efficiently. Upload once, generate for all platforms.
+        </p>
+        <p class="text-body">
+          Stop wasting time on repetitive content creation. Focus on what matters—creating great content. Let Alphagon handle the distribution.
+        </p>
+      </div>
     </div>
 
-    <div class="back-link">
-      <a href="/">← Back to Home</a> | <a href="/dashboard">Go to Dashboard →</a>
+    <div style="text-align: center;">
+      <a href="/" class="btn btn-secondary">← Back to Home</a>
+      <a href="/dashboard" class="btn btn-primary">Go to Dashboard →</a>
     </div>
   </div>
 </body>
