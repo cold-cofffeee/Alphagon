@@ -51,11 +51,8 @@ export async function analyzeMedia(fileBase64: string, mimeType: string): Promis
 export async function parseVoiceSettings(audioBase64: string): Promise<Partial<GenerationSettings>> {
   const ai = getAIClient();
   const prompt = `Listen to this voice request for content generation settings. 
-  Extract the desired Emotion, Tone, Language, Region, and Target Audience.
-  Return only JSON. If something is not specified, omit it.
-  
-  Example Input: "I want a bold emotional tone in Spanish for an audience in Latin America."
-  Example Output: {"emotion": "Bold", "tone": "Emotional", "language": "Spanish", "region": "Latin America"}`;
+  Extract desired Emotion, Tone, Language, Region, and Target Audience.
+  Return only JSON.`;
 
   const response = await ai.models.generateContent({
     model: 'gemini-3-flash-preview',
@@ -85,7 +82,8 @@ export async function generatePlatformContent(
   const ai = getAIClient();
   const prompt = `Based on this content analysis:
   Summary: ${analysis.summary}
-  Keywords: ${analysis.keywords.join(', ')}
+  Intent: ${analysis.intent}
+  Transcript: ${analysis.transcript.substring(0, 1000)}...
   
   Generate specific content for ${platform}.
   Target Audience: ${settings.targetAudience}
@@ -95,15 +93,22 @@ export async function generatePlatformContent(
   Language: ${settings.language}
   
   Instructions for ${platform}:
-  - YouTube: 3 SEO-optimized titles, a short catchy description, and a long-form metadata-rich description.
-  - Shorts: A punchy 60-second script optimized for vertical video, including overlay text suggestions and sound effect cues.
-  - Twitter: A thread of 5-7 tweets including a viral hook opening.
-  - Instagram: 3 variations of reels captions with trending hashtags.
-  - Blog: A structured article draft with H1, H2 tags.
-  - AdCopy: 2 variations of conversion-focused ad copy (Hook, Body, CTA).
-  - Hooks: 5 variations of the first 3-5 seconds of the video to maximize retention.
+  - YouTube: 5 SEO-optimized titles (viral style) and a comma-separated tag list.
+  - Shorts: A retention-mapped vertical video script (60s) with overlay cues and audio timestamps.
+  - Facebook: A conversation-focused post with platform-native engagement hooks.
+  - Twitter: A high-impact thread (5-7 tweets) starting with a scroll-stopping hook.
+  - Instagram: 3 Reel caption variations with emoji-rich storytelling and 15 niche hashtags.
+  - Blog: A SEO-friendly article draft with clear H1, H2, and H3 formatting.
+  - Thumbnail: 5 "Thumbnail Copy" options (max 4 words) designed for high contrast and curiosity.
+  - Descriptions: 1 "Short Description" (150 chars max) and 1 SEO-heavy "Long-form Description" (1000+ chars).
+  - AdCopy: 3 conversion-focused variations using the PAS (Problem, Agitate, Solution) framework.
+  - Hooks: 5 retention-optimized openings for the first 3–5 seconds (Visual, Text, and Audio hooks).
+  - Growth: Provide:
+    1. [Content Improvement Suggestions]: Specific feedback to make this piece better.
+    2. [More Ideas - Same Angle]: 3 new video topics exploring the same core message.
+    3. [More Ideas - Variation/Twists]: 3 new topics taking the message in a wildly different direction.
   
-  Focus on high impact and precision. Do not use generic filler.`;
+  Adapt tone and emotion for culture-aware targeting. Focus on precision and control.`;
 
   const response = await ai.models.generateContent({
     model: 'gemini-3-pro-preview',
@@ -118,21 +123,24 @@ export async function generatePlatformContent(
 
 export async function generateInsights(analysis: ContentAnalysis): Promise<Insight> {
   const ai = getAIClient();
-  const prompt = `Analyze the niche of this content:
+  const prompt = `Perform a Competitor & Strategy analysis for this content:
   Topics: ${analysis.topics.join(', ')}
+  Summary: ${analysis.summary}
   
   Provide:
-  1. The specific niche classification.
-  2. How competitors in this niche typically position themselves.
-  3. Identified gaps in current market content for this topic.
-  4. Unique opportunities for differentiation.
+  1. Specific Niche classification.
+  2. Competitor Strategy: How others typically cover this.
+  3. Content Gaps: What is missing from current market discussions.
+  4. Opportunities: High-impact ways to present this.
+  5. Differentiation Ideas: Specific, creative ways to stand out based on current market behavior.
   
   Return JSON following:
   {
     "niche": string,
     "competitorStrategy": string,
     "gaps": string[],
-    "opportunities": string[]
+    "opportunities": string[],
+    "differentiationIdeas": string[]
   }`;
 
   const response = await ai.models.generateContent({
@@ -146,7 +154,8 @@ export async function generateInsights(analysis: ContentAnalysis): Promise<Insig
           niche: { type: Type.STRING },
           competitorStrategy: { type: Type.STRING },
           gaps: { type: Type.ARRAY, items: { type: Type.STRING } },
-          opportunities: { type: Type.ARRAY, items: { type: Type.STRING } }
+          opportunities: { type: Type.ARRAY, items: { type: Type.STRING } },
+          differentiationIdeas: { type: Type.ARRAY, items: { type: Type.STRING } }
         }
       }
     }

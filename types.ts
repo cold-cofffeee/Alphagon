@@ -1,5 +1,16 @@
 
-export type Platform = 'YouTube' | 'Facebook' | 'Twitter' | 'Instagram' | 'Blog' | 'AdCopy' | 'Hooks' | 'Shorts';
+export type Platform = 
+  | 'YouTube' 
+  | 'Facebook' 
+  | 'Twitter' 
+  | 'Instagram' 
+  | 'Blog' 
+  | 'AdCopy' 
+  | 'Hooks' 
+  | 'Shorts' 
+  | 'Thumbnail' 
+  | 'Descriptions' 
+  | 'Growth';
 
 export interface ContentAnalysis {
   transcript: string;
@@ -30,4 +41,5 @@ export interface Insight {
   competitorStrategy: string;
   gaps: string[];
   opportunities: string[];
+  differentiationIdeas: string[];
 }
